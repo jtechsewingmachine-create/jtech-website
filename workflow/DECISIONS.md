@@ -82,3 +82,9 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-027 — Enquiry phone rule: 10 digits starting 2–9, optional +91/91/0
 2026-11-13 · F-05 · Rejects 0000000000/1234567890-style input; accepts Indian mobiles and landlines with STD code. Go API (F-07) must mirror it. Owner may tighten later. · QA-2 · — · builder
+
+## D-028 — /locations is noindex while its entries are fictional; /support orphan warning accepted
+2026-11-13 · F-06 · Fictional locations must never be indexed (blueprint). `/support` triggers the registry's "orphan" warning because it has no cluster; it is linked from the header, footer, home and every machine page, so the warning is a heuristic miss, not a real orphan. · — · — · builder
+
+## D-029 — Decorative arrow kept out of link names
+2026-11-13 · F-06 · `.link-arrow::after` uses `content: "→" / ""` so screen readers don't read "right arrow"; hidden link suffixes read "for X"/"at X" (e.g. "Contact about this for General repairs"). Affects every arrow link site-wide. · Found while testing accessible names. · — · builder

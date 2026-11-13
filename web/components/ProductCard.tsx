@@ -23,7 +23,7 @@ export function ProductCard({ product, headingLevel = 3 }: { product: Product; h
         {product.availability === "unavailable" && <li className="product-card__unavailable">Currently unavailable</li>}
       </ul>
       <Link href={`/machines/${product.slug}`} className="link-arrow">
-        View machine details<span className="visually-hidden">: {product.name}</span>
+        View machine details<span className="visually-hidden"> for {product.name}</span>
       </Link>
     </article>
   );

@@ -6,3 +6,6 @@
 - F-04 UI-5: Retry / Contact support buttons have unequal widths on phones.
 - F-04 UI-3: detail page for models without photos has a large empty media area on desktop; revisit when photos arrive.
 - F-05: error-summary links jump to a field but don't move focus into the input.
+- F-06 UI-1: support route grid breaks 3+2 at 768px.
+- F-06 UI-4: support contact column has empty space under the button at 1440px.
+- F-06 QA: /locations empty state is only reachable by emptying `web/lib/locations.ts`.

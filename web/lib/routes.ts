@@ -125,6 +125,32 @@ export const routes: Route[] = [
     indexable: false,
   },
 
+  {
+    path: "/support",
+    breadcrumb: "Support",
+    targetQuery: "jtech sewing machine support",
+    intent: "informational",
+    pageType: "utility",
+    clusterParent: null,
+    title: "Jtech Sewing Machine Support | Repairs, Warranty, Contact",
+    description:
+      "How to get help with a Jtech sewing machine: buying, demonstrations, repairs, warranty and trade enquiries, with what is confirmed and what is still pending.",
+    priority: 0.6,
+  },
+  {
+    // Fictional prototype entries only: keep out of the index until verified locations exist.
+    path: "/locations",
+    breadcrumb: "Locations",
+    targetQuery: "jtech sewing machine locations",
+    intent: "local",
+    pageType: "utility",
+    clusterParent: null,
+    title: "Jtech Sewing Machine Locations | Sales and Service Points",
+    description:
+      "Where to see a Jtech sewing machine or get it serviced. This prototype shows clearly fictional example locations; real locations are awaiting confirmation.",
+    indexable: false,
+  },
+
 ];
 
 export const routeFor = (path: string): Route => {

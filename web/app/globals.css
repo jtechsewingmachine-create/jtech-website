@@ -177,6 +177,7 @@ svg {
 
 .link-arrow::after {
   content: "→";
+  content: "→" / ""; /* decorative: keep the arrow out of the accessible name */
   text-decoration: none;
   display: inline-block;
 }
@@ -1147,4 +1148,53 @@ svg {
   .enquiry {
     grid-template-columns: 1fr;
   }
+}
+
+/* --- Support + locations --- */
+
+.route-grid,
+.location-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0 clamp(2.5rem, 6vw, 4.5rem);
+  padding: 0;
+  list-style: none;
+}
+
+.route-grid li,
+.location-list li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.route-grid h3,
+.location-list h3 {
+  margin: 0;
+}
+
+.route-grid p,
+.location-list p {
+  margin: 0;
+}
+
+.route-grid .link-arrow,
+.location-list .link-arrow {
+  margin-top: auto;
+}
+
+.location-list__services {
+  font-weight: 600;
+}
+
+#contact:focus {
+  outline: none;
+}
+
+.location-list {
+  margin-bottom: 0;
 }
