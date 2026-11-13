@@ -1,0 +1,14 @@
+.DS_Store
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+.env*
+!.env.example
+test-results/
+playwright-report/
+workflow/reports/*/screenshots/
+# large, not needed for code
+dev_ref/video image generation/
+dev_ref/*.zip
+dev_ref/wireframe output/*.zip
