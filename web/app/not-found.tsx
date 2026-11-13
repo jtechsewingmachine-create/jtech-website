@@ -20,13 +20,13 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <article>
+    <article className="container section">
       <h1>Page not found</h1>
       <p>
         That page does not exist. It may have been moved, or the address may be
         mistyped.
       </p>
-      <Link href="/">Back to the home page</Link>
+      <Link href="/" className="link-arrow">Back to the home page</Link>
     </article>
   );
 }

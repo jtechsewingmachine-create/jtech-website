@@ -1,24 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Red_Hat_Display } from "next/font/google";
+import { Logo } from "@/components/Logo";
+import { mainNav, footerNav } from "@/lib/nav";
 import { site } from "@/lib/site.config";
 import { siteJsonLd } from "@/lib/seo";
 import "./globals.css";
 
-/**
- * No webfont by default, deliberately.
- *
- * `next/font/google` fetches the font at build time, so the build fails outright
- * on any network that blocks fonts.googleapis.com — which includes plenty of CI
- * runners and locked-down environments. A template reused for years should not
- * carry that failure mode, and the typeface is a per-project design decision
- * anyway.
- *
- * The system stack in globals.css costs no request, renders with zero layout
- * shift and no flash of invisible text. To add a webfont for a specific project:
- * import it from `next/font/google` or `next/font/local` with
- * `display: "swap"` and `variable: "--font-sans"`, then put the variable class
- * on <html>. globals.css already prefers --font-sans when it is defined.
- */
+// Geometric sans matching the UI reference headings (D-010). next/font self-hosts
+// it, but fetches from Google Fonts at build time: if CI blocks that, switch to
+// next/font/local with the same `variable`.
+const sans = Red_Hat_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 /**
  * Site-wide metadata defaults. Per-page values come from lib/routes.ts via
@@ -39,28 +35,64 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang={site.locale}>
+    <html lang={site.locale} className={sans.variable}>
       <body>
         {/* Organization + WebSite, once per site. Page-level schema goes in the page. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd()) }}
         />
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
 
         <header className="site-header">
-          {/* Real anchors, so crawlers can follow navigation. Never div onClick. */}
-          <nav aria-label="Main">
-            <Link href="/">{site.name}</Link>
-          </nav>
+          <div className="container site-header__inner">
+            <Link href="/" className="site-header__logo" aria-label="Jtech Sewing Machines home">
+              <Logo />
+            </Link>
+            {/* Real anchors, so crawlers can follow navigation. Never div onClick. */}
+            <nav aria-label="Main" className="site-nav">
+              <ul>
+                {mainNav.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href}>{item.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
         </header>
 
         {/* One <main> per page. The render check asserts it has real content. */}
-        <main>{children}</main>
+        <main id="main" tabIndex={-1}>
+          {children}
+        </main>
 
         <footer className="site-footer">
-          <p>
-            © {new Date().getFullYear()} {site.organization.legalName}
-          </p>
+          <div className="container site-footer__inner">
+            <Link href="/" className="site-footer__logo" aria-label="Jtech Sewing Machines home">
+              <Logo />
+            </Link>
+            <nav aria-label="Footer" className="site-footer__nav">
+              {footerNav.map((group) => (
+                <div key={group.heading}>
+                  <h2>{group.heading}</h2>
+                  <ul>
+                    {group.links.map((l) => (
+                      <li key={l.href}>
+                        <Link href={l.href}>{l.label}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </nav>
+          </div>
+          <div className="container site-footer__legal">
+            <p>© {new Date().getFullYear()} {site.organization.legalName}</p>
+            <p>Private prototype: sample products and details.</p>
+          </div>
         </footer>
       </body>
     </html>

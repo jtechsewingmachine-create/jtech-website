@@ -7,7 +7,7 @@ Main doc: `dev_ref/wireframe output/jtech-website-handoff.md` (called "Blueprint
 | ID | Feature | Depends on | Docs | Wireframes | UI? | Status | Done on |
 |----|---------|-----------|------|------------|-----|--------|---------|
 | F-00 | Project foundation | — | starter pack, D-001 | — | Yes | done | 2026-11-13 |
-| F-01 | Site shell: brand styles, header, footer, mobile nav | F-00 | Blueprint §Navigation | UI ref (header/footer) | Yes | todo | |
+| F-01 | Site shell: brand styles, header, footer, mobile nav | F-00 | Blueprint §Navigation | UI ref (header/footer) | Yes | done | 2026-11-13 |
 | F-02 | Demo catalogue data + Machines listing `/machines` | F-01 | Blueprint §Machines, §Product listing | UI ref (demo range) | Yes | todo | |
 | F-03 | Homepage `/` | F-02 | Blueprint §Homepage | UI ref (whole page) | Yes | todo | |
 | F-04 | Product detail `/machines/[slug]` | F-02 | Blueprint §Representative Machine Detail, D-003/D-004 | UI ref (style) | Yes | todo | |

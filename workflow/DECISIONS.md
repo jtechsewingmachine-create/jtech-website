@@ -28,3 +28,15 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-009 — Reviewer agents skipped for F-00
 2026-11-13 · F-00 · F-00 is scaffolding with no app logic; the gates + smoke tests cover it. Reviewers run from F-01 on. · Setup doc asks for review after substantial features. · — · builder
+
+## D-010 — Typeface: Red Hat Display via next/font
+2026-11-13 · F-01 · Geometric sans close to the UI reference headings; self-hosted at build time, `display: swap`. · Starter warns next/font/google needs network at build; acceptable here, switch to `next/font/local` if CI blocks Google Fonts. · — · builder
+
+## D-011 — Mobile nav is a link row, not a menu
+2026-11-13 · F-01 · On phones the 4 main links sit in a row under the logo; no hamburger, no JS. · Blueprint asks for mobile navigation that closes before navigating and doesn't hide the homepage journey; a row with nothing to open meets both with zero script. · Blueprint §Navigation MobileMenuClosure — not needed · builder
+
+## D-012 — Light theme only
+2026-11-13 · F-01 · Dropped the starter's dark-mode palette. · Brand design is light with a dark band; an untested dark mode would break the red/black brand look. · — · builder
+
+## D-013 — Footer "Contact" → `/support#contact`
+2026-11-13 · F-01 · Blueprint maps Contact → Support screen; the anchor lands on the contact part of that page (built in F-06). · — · — · builder

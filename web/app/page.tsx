@@ -7,7 +7,7 @@ export const metadata = seoFor(PATH);
 // Placeholder until F-03 builds the real homepage.
 export default function Home() {
   return (
-    <article>
+    <article className="container section">
       <h1>Jtech sewing machines</h1>
       <p>
         Explore machines, understand what&apos;s included, and find out what to
