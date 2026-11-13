@@ -1,0 +1,32 @@
+{
+  "name": "jtech-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jtech Sewing Machines website (Next.js, SEO starter baseline).",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "check:routes": "node scripts/check-routes.mjs",
+    "check:render": "node scripts/verify.mjs",
+    "check:deps": "npm audit --audit-level=high",
+    "verify": "npm run check:routes && npm run build && node scripts/verify.mjs",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "next": "^15.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "//overrides": "Next 15 pins a postcss with four advisories (XSS via unescaped </style>, arbitrary .map reads via attacker-controlled sourceMappingURL). They only bite on attacker-controlled CSS, which a build never processes - but `npm audit fix --force` would jump to Next 16. This pin stays inside the 8.x line Next expects and clears the audit. Drop it once Next ships a patched postcss itself.",
+  "overrides": {
+    "postcss": "^8.5.29"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}

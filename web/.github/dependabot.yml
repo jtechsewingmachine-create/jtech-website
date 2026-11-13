@@ -1,0 +1,24 @@
+# Dependency updates arrive as pull requests instead of waiting to be
+# remembered. An unpatched site is one of the few ways to lose rankings that is
+# genuinely hard to undo: a hacked-site label or injected spam pages cost you
+# everything the domain has earned.
+#
+# Grouped so a normal month is one PR to review, not fifteen. Majors are
+# deliberately left out of the group — take those one at a time, through
+# `npm run verify`.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      patch-and-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly

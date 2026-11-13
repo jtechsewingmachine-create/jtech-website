@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1790 890" role="img" aria-labelledby="t">
+  <title id="t">Jtech Sewing Machines</title>
+  <g transform="translate(-110 -300)">
+    <g fill="#9b1020">
+      <path d="M165 318H289V960C287 1062 232 1140 125 1176C186 1120 207 1060 207 990V354H165Z"/>
+      <path d="M455 345H540V487L712 466C640 492 572 522 540 562V845H645V925H562C497 925 455 893 455 830Z"/>
+      <path d="M1405 318H1537V920H1467V356H1405Z"/>
+      <path d="M1735 895H1875V935H1735Z"/>
+    </g>
+    <g fill="none" stroke="#9b1020" stroke-width="78">
+      <path d="M748 768L946 650A128 146 0 1 0 956 822"/>
+      <path d="M1328 650A132 148 0 1 0 1336 838"/>
+      <path d="M1500 640C1540 585 1600 575 1660 575C1740 575 1776 622 1776 700V915"/>
+    </g>
+    <circle cx="366" cy="683" r="26" fill="#111"/>
+    <!-- shortcut: system font, not outlined; outline the text if a vector tool is available -->
+    <text x="610" y="1085" font-family="Helvetica, Arial, sans-serif" font-size="128" textLength="1245" lengthAdjust="spacingAndGlyphs" fill="#111">Sewing Machines</text>
+  </g>
+</svg>
