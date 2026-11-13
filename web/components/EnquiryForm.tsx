@@ -7,6 +7,7 @@ import {
   CONFIRMATION_KEY,
   LIMITS,
   intents,
+  submitEnquiry,
   validateEnquiry,
   type ConfirmationContext,
   type EnquiryErrors,
@@ -14,19 +15,9 @@ import {
 } from "@/lib/enquiry";
 
 type ModelOption = { slug: string; name: string };
-type Status = "idle" | "submitting" | "failed";
+type Status = "idle" | "submitting" | "failed" | "rate-limited";
 
 const FIELD_ORDER: (keyof EnquiryInput)[] = ["name", "phone", "intent", "model", "message"];
-
-/**
- * shortcut: submission is simulated in the browser (blueprint: no live enquiries yet).
- * It fails only when the browser is offline, so the failure state is real and testable.
- * F-07 replaces simulateSubmit with a call to the Go API.
- */
-async function simulateSubmit(): Promise<void> {
-  await new Promise((r) => setTimeout(r, 600));
-  if (!navigator.onLine) throw new Error("offline");
-}
 
 export function EnquiryForm({
   models,
@@ -37,6 +28,7 @@ export function EnquiryForm({
 }) {
   const router = useRouter();
   const [values, setValues] = useState<EnquiryInput>({ name: "", phone: "", message: "", ...initial });
+  const [website, setWebsite] = useState(""); // honeypot
   const [errors, setErrors] = useState<EnquiryErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   // Until hydrated, a native submit would bypass validation; keep the button inert until then.
@@ -44,6 +36,12 @@ export function EnquiryForm({
   useEffect(() => setHydrated(true), []);
   const summaryRef = useRef<HTMLDivElement>(null);
   const failRef = useRef<HTMLDivElement>(null);
+  // Bumped after each submit outcome; the effect runs after React commits, so the target exists.
+  const [focusTick, setFocusTick] = useState(0);
+  useEffect(() => {
+    if (focusTick === 0) return;
+    (failRef.current ?? summaryRef.current)?.focus();
+  }, [focusTick]);
 
   const set = (k: keyof EnquiryInput) => (e: { target: { value: string } }) =>
     setValues((v) => ({ ...v, [k]: e.target.value }));
@@ -55,15 +53,19 @@ export function EnquiryForm({
     setErrors(found);
     if (Object.keys(found).length > 0) {
       setStatus("idle");
-      requestAnimationFrame(() => summaryRef.current?.focus());
+      setFocusTick((t) => t + 1);
       return;
     }
     setStatus("submitting");
-    try {
-      await simulateSubmit();
-    } catch {
-      setStatus("failed");
-      requestAnimationFrame(() => failRef.current?.focus());
+    const result = await submitEnquiry({ ...values, website });
+    if (!result.ok) {
+      if (result.kind === "invalid") {
+        setErrors(result.errors);
+        setStatus("idle");
+      } else {
+        setStatus(result.kind);
+      }
+      setFocusTick((t) => t + 1);
       return;
     }
     const ctx: ConfirmationContext = {
@@ -86,7 +88,7 @@ export function EnquiryForm({
   return (
     <form className="form" method="post" onSubmit={onSubmit} noValidate aria-describedby="form-notice">
       <p id="form-notice" className="notice">
-        <strong>Prototype:</strong> this form is a simulation. Nothing you enter is sent or stored.
+        We use your name and number only to reply to this enquiry. Enquiries are deleted after 90 days.
       </p>
 
       {errorIds.length > 0 && (
@@ -105,9 +107,19 @@ export function EnquiryForm({
         </div>
       )}
 
+      {status === "rate-limited" && (
+        <div className="error-summary" ref={failRef} tabIndex={-1} role="alert">
+          <h2>Too many enquiries from this connection</h2>
+          <p>Your entries are still here. Please wait a few minutes and try again, or use the support page.</p>
+          <Link href="/support" className="btn">
+            Contact support
+          </Link>
+        </div>
+      )}
+
       {status === "failed" && (
         <div className="error-summary" ref={failRef} tabIndex={-1} role="alert">
-          <h2>The enquiry could not be completed</h2>
+          <h2>The enquiry could not be sent</h2>
           <p>Your entries are still here. Check your connection and try again.</p>
           <div className="link-row">
             <button type="submit" className="btn btn--primary">
@@ -218,8 +230,14 @@ export function EnquiryForm({
         {errors.message && <p id="message-error" className="field__error">{errors.message}</p>}
       </div>
 
+      {/* Honeypot: hidden from people and assistive tech; bots that fill it are silently dropped. */}
+      <div className="hp" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input id="website" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
+      </div>
+
       <button type="submit" className="btn btn--primary" disabled={!hydrated} aria-disabled={status === "submitting" ? true : undefined}>
-        {status === "submitting" ? "Sending…" : "Submit simulated enquiry"}
+        {status === "submitting" ? "Sending…" : "Send enquiry"}
       </button>
       <noscript>
         <p className="field__hint">This form needs JavaScript. You can still find contact guidance on the support page.</p>

@@ -35,7 +35,7 @@ export function ConfirmationDetails() {
     return (
       <div className="empty-state">
         <h2>No confirmation details are available.</h2>
-        <p>Return to the enquiry or browse the demo machines.</p>
+        <p>If you sent an enquiry, it was received only if you saw the &ldquo;Enquiry sent&rdquo; message. Return to the enquiry or browse the machines.</p>
         <div className="link-row link-row--center">
           <Link href="/enquiry" className="btn btn--primary">
             Return to enquiry
@@ -51,11 +51,11 @@ export function ConfirmationDetails() {
   return (
     <div className="confirmation__success">
       <h2>
-        Simulation <span className="accent">complete</span>
+        Enquiry <span className="accent">sent</span>
       </h2>
       <p className="lede">
-        No enquiry was sent and no order was placed. In the live website, the Jtech team would follow up
-        by phone or messaging.
+        Thank you. The Jtech team will contact you by phone or messaging. This is an enquiry, not an
+        order, and no payment is taken. Response times are not yet confirmed.
       </p>
     <dl className="facts confirmation__facts">
       <div>

@@ -94,3 +94,12 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-031 — Hosting: Next.js on Vercel, Go API on Render (human)
 2026-11-13 · F-09 · Vercel paid plan once commercial (starter README note). Human creates the accounts; builder writes the config. · Human choice · — · human
+
+## D-032 — Go API talks to Supabase over REST (no DB driver), proxied same-origin by Next
+2026-11-13 · F-07 · Go uses only the standard library: POST to `<SUPABASE_URL>/rest/v1/enquiries` with the server-side secret key. Next rewrites `/api/enquiries` → `API_ORIGIN` (build-time), so the browser never calls another origin (no CORS; CSP unchanged). Spam controls: per-IP fixed-window limit (5 per 10 min, `RATE_LIMIT`), honeypot field, 8 KiB body cap, JSON-only. Logs never contain personal data. The API's model list is guarded against drift by a Go test that reads `web/lib/products.ts`. · Avoids adding pgx; keeps one origin. · — · builder
+
+## D-033 — Database is the last line of validation
+2026-11-13 · F-07 · `public.enquiries` has CHECK constraints matching the API rules (name 2–80 chars, phone `^[2-9][0-9]{9}$`, intent enum, model slug shape, message ≤ 1000), RLS on with no policies, privileges revoked from anon/authenticated (verified: browser key gets 401/permission denied for insert and select), and a pg_cron job deleting rows older than 90 days. Migration kept in `supabase/migrations/`. · Defence in depth for personal data. · — · builder
+
+## D-034 — Enquiry proxy is a Next route handler with a shared secret (supersedes the rewrite in D-032)
+2026-11-13 · F-07 · `web/app/api/enquiries/route.ts` forwards to `API_ORIGIN` with `X-Proxy-Secret` and `X-Client-IP` (from Vercel's x-forwarded-for). The Go API requires the secret in production (403 otherwise; refuses to start without `PROXY_SECRET`), trusts `X-Client-IP` only with a valid secret, and never reads X-Forwarded-For. Rate limiting now counts every request, and JSON with trailing data is rejected. · Review CR-1/CR-2/CR-4, QA-1/QA-2/QA-3/QA-4: the rewrite + left-most XFF let anyone bypass the limit, and the API was reachable directly. · — · builder

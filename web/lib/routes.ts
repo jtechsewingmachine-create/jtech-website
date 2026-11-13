@@ -121,7 +121,7 @@ export const routes: Route[] = [
     clusterParent: "/enquiry",
     title: "Enquiry Confirmation | Jtech Sewing Machines",
     description:
-      "Confirmation of your Jtech enquiry. In this prototype nothing is sent and no order is placed; continue browsing machines or return to the enquiry form.",
+      "Confirmation that your Jtech enquiry was sent. It is not an order and no payment is taken; the Jtech team follows up by phone or messaging.",
     indexable: false,
   },
 

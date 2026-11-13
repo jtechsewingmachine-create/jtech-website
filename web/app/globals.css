@@ -1132,6 +1132,14 @@ svg {
   cursor: progress;
 }
 
+.hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .link-row--center {
   justify-content: center;
 }

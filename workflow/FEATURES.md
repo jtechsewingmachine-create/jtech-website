@@ -13,7 +13,7 @@ Main doc: `dev_ref/wireframe output/jtech-website-handoff.md` (called "Blueprint
 | F-04 | Product detail `/machines/[slug]` | F-02 | Blueprint §Representative Machine Detail, D-003/D-004 | UI ref (style) | Yes | done | 2026-11-13 |
 | F-05 | Enquiry form + confirmation (simulated in browser) | F-04 | Blueprint §Enquiry, §Enquiry Confirmation | UI ref (style) | Yes | done | 2026-11-13 |
 | F-06 | Support `/support` + Locations `/locations` | F-01 | Blueprint §Support, §Locations | UI ref (style) | Yes | done | 2026-11-13 |
-| F-07 | Go enquiry API + connect form | F-05 | D-002, D-006 | — | No | todo | |
+| F-07 | Go enquiry API + connect form | F-05 | D-002, D-006, D-030, D-034 | — | No | done | 2026-11-13 |
 | F-08 | SEO + accessibility hardening pass | F-03..F-07 | starter CLAUDE.md, Blueprint §States/a11y findings | — | Yes | todo | |
 | F-09 | Deploy (web + api) | F-08 | starter README | — | No | blocked (needs hosting decision) | |
 
@@ -59,4 +59,5 @@ Main doc: `dev_ref/wireframe output/jtech-website-handoff.md` (called "Blueprint
 - Includes: Product/Breadcrumb JSON-LD only for visible content, heading audit, contrast/focus/target-size checks, reduced-motion check, `npm run verify` green on all routes.
 
 ### F-09 — Deploy
-- Needs human: hosting choice for web (Vercel suggested by starter) and Go API, domain.
+- Hosting decided (D-031): Vercel (web) + Render (api). Needs human: accounts, domain, secrets.
+- Must set on Render: `APP_ENV=production`, `PROXY_SECRET`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `RATE_LIMIT`. On Vercel: `API_ORIGIN`, `PROXY_SECRET` (same value), `SITE_URL`, and `SITE_ENV=preview` until launch.

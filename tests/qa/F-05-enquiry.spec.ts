@@ -38,7 +38,7 @@ test("trade link preselects trade intent; junk query values are ignored", async 
 test("empty submit shows text errors, focuses the summary, keeps values", async ({ page }) => {
   await page.goto("/enquiry");
   await page.getByLabel("Name (required)").fill("Asha");
-  await page.getByRole("button", { name: "Submit simulated enquiry" }).click();
+  await page.getByRole("button", { name: "Send enquiry" }).click();
   const summary = page.locator(".error-summary");
   await expect(summary).toBeFocused();
   await expect(summary).toContainText("Enter a contact number.");
@@ -60,23 +60,26 @@ test("offline submit fails, keeps every value, Retry succeeds once online", asyn
   await page.goto("/enquiry");
   await fillValid(page);
   await context.setOffline(true);
-  await page.getByRole("button", { name: "Submit simulated enquiry" }).click();
-  await expect(page.locator(".error-summary")).toContainText("could not be completed");
+  await page.getByRole("button", { name: "Send enquiry" }).click();
+  await expect(page.locator(".error-summary")).toContainText("could not be sent");
   await expect(page.locator(".error-summary")).toBeFocused();
   await expect(page.getByLabel("Name (required)")).toHaveValue("Asha");
   await expect(page.getByLabel(/Your question/)).toHaveValue("Can it hem jeans?");
   await context.setOffline(false);
-  await page.getByRole("button", { name: "Retry" }).click();
-  await expect(page).toHaveURL(/\/enquiry\/confirmation$/);
+  // Chromium can take a moment to notice it is back online; a person would simply press Retry again.
+  await expect(async () => {
+    await page.getByRole("button", { name: "Retry" }).click({ timeout: 1000 });
+    await expect(page).toHaveURL(/\/enquiry\/confirmation$/, { timeout: 2000 });
+  }).toPass({ timeout: 15_000 });
 });
 
 test("success lands on confirmation with context and no personal data", async ({ page }) => {
   await page.goto("/enquiry");
   await fillValid(page);
-  await page.getByRole("button", { name: "Submit simulated enquiry" }).click();
+  await page.getByRole("button", { name: "Send enquiry" }).click();
   await expect(page).toHaveURL(/\/enquiry\/confirmation$/);
   await expect(page.locator("h1")).toHaveText("Your Jtech enquiry");
-  await expect(page.getByRole("heading", { name: "Simulation complete" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Enquiry sent" })).toBeVisible();
   await expect(page.locator(".confirmation__facts")).toContainText("Machine enquiry");
   await expect(page.locator(".confirmation__facts")).toContainText("Stylish Stitcher");
   const stored = await page.evaluate(() => JSON.stringify(sessionStorage));
@@ -89,7 +92,7 @@ test("confirmation opened directly shows the missing-context state", async ({ pa
   await page.goto("/enquiry/confirmation");
   await expect(page.getByText("No confirmation details are available.")).toBeVisible();
   await expect(page.getByRole("link", { name: "Return to enquiry" })).toHaveAttribute("href", "/enquiry");
-  await expect(page.getByText("Simulation complete")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Enquiry sent" })).toHaveCount(0);
 });
 
 test("enquiry pages are noindex", async ({ request }) => {

@@ -70,7 +70,7 @@ test.describe("form behaviour", () => {
     page.on("dialog", (d) => { dialogs.push(d.message()); d.dismiss(); });
     await page.goto("/enquiry");
     await fillOk(page, `<script>alert(1)</script>'; DROP TABLE x; -- 😀`, "98765 43210");
-    await page.getByLabel(/Your question/).fill(`<img src=x onerror=alert(2)> ' OR 1=1 -- {{7*7}} \${7*7} ‮ RTL \u0000`);
+    await page.getByLabel(/Your question/).fill(`<img src=x onerror=alert(2)> ' OR 1=1 -- {{7*7}} \${7*7} ‮ RTL`);
     await submitBtn(page).click();
     await expect(page).toHaveURL(/confirmation$/);
     await expect(page.locator("body")).not.toContainText("DROP TABLE");
@@ -141,16 +141,30 @@ test.describe("form behaviour", () => {
     await page.getByLabel(/Your question/).fill("hello 😀");
     await context.setOffline(true);
     await submitBtn(page).click();
-    await expect(page.getByText("The enquiry could not be completed")).toBeVisible();
+    await expect(page.getByText("The enquiry could not be sent")).toBeVisible();
     await expect(summary(page)).toBeFocused();
     await expect(page.getByLabel(NAME)).toHaveValue("Asha Rao");
     await expect(page.getByLabel(/Your question/)).toHaveValue("hello 😀");
     await expect(page.getByLabel("Machine (optional)")).toHaveValue("demo-model-2");
     await page.getByRole("button", { name: "Retry" }).click();
-    await expect(page.getByText("The enquiry could not be completed")).toBeVisible(); // still offline
+    await expect(page.getByText("The enquiry could not be sent")).toBeVisible(); // still offline
     await context.setOffline(false);
-    await page.getByRole("button", { name: "Retry" }).click();
-    await expect(page).toHaveURL(/confirmation$/);
+    await expect(async () => {
+      await page.getByRole("button", { name: "Retry" }).click({ timeout: 2000 });
+      await expect(page).toHaveURL(/confirmation$/, { timeout: 4000 });
+    }).toPass({ timeout: 20000 });
+  });
+
+  test("NUL / control characters in the message are rejected inline, never sent", async ({ page }) => {
+    let posts = 0;
+    page.on("request", (r) => { if (r.method() === "POST" && r.url().includes("/api/enquiries")) posts++; });
+    await page.goto("/enquiry");
+    await fillOk(page);
+    await page.getByLabel(/Your question/).fill("bad \u0000 char");
+    await submitBtn(page).click();
+    await expect(summary(page)).toBeFocused();
+    await expect(page).not.toHaveURL(/confirmation$/);
+    expect(posts).toBe(0);
   });
 
   test("offline then invalid edit: stale failure banner does not linger beside validation errors", async ({ page, context }) => {
@@ -158,19 +172,21 @@ test.describe("form behaviour", () => {
     await fillOk(page);
     await context.setOffline(true);
     await submitBtn(page).click();
-    await expect(page.getByText("The enquiry could not be completed")).toBeVisible();
+    await expect(page.getByText("The enquiry could not be sent")).toBeVisible();
     await page.getByLabel(PHONE).fill("1");
     await submitBtn(page).click();
-    await expect(page.getByText("The enquiry could not be completed")).toHaveCount(0);
+    await expect(page.getByText("The enquiry could not be sent")).toHaveCount(0);
     await context.setOffline(false);
   });
 
   test("going offline during the Sending state still fails cleanly", async ({ page, context }) => {
     await page.goto("/enquiry");
     await fillOk(page);
+    // The real API answers in ms, so hold the request in flight to make "offline mid-send" deterministic.
+    await page.route("**/api/enquiries", async (r) => { await new Promise((x) => setTimeout(x, 800)); await r.abort("internetdisconnected"); });
     await submitBtn(page).click();
     await context.setOffline(true);
-    await expect(page.getByText("The enquiry could not be completed")).toBeVisible();
+    await expect(page.getByText("The enquiry could not be sent")).toBeVisible();
     await context.setOffline(false);
   });
 

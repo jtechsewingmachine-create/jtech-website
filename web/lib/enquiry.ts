@@ -41,7 +41,7 @@ export const charCount = (s: string): number => [...s].length;
 export function validateEnquiry(input: EnquiryInput): EnquiryErrors {
   const errors: EnquiryErrors = {};
   const name = input.name.trim();
-  if (charCount(name) < LIMITS.nameMin) errors.name = "Enter your name.";
+  if (charCount(name) < LIMITS.nameMin || /[\u0000-\u001F\u007F-\u009F]/.test(name)) errors.name = "Enter your name.";
   else if (charCount(name) > LIMITS.nameMax) errors.name = `Name must be ${LIMITS.nameMax} characters or fewer.`;
 
   if (!input.phone.trim()) errors.phone = "Enter a contact number.";
@@ -51,7 +51,10 @@ export function validateEnquiry(input: EnquiryInput): EnquiryErrors {
 
   if (input.model && !productBySlug(input.model)) errors.model = "Choose a machine from the list, or no specific machine.";
 
-  if (charCount(input.message) > LIMITS.messageMax)
+  // Same rule as the Go API: no control characters except line breaks and tabs.
+  if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/.test(input.message))
+    errors.message = "Your question contains characters that can't be sent.";
+  else if (charCount(input.message) > LIMITS.messageMax)
     errors.message = `Your question must be ${LIMITS.messageMax} characters or fewer (currently ${charCount(input.message)}).`;
 
   return errors;
@@ -61,6 +64,32 @@ export function validateEnquiry(input: EnquiryInput): EnquiryErrors {
 export interface ConfirmationContext {
   intentLabel: string;
   modelName: string | null;
+}
+
+export type SubmitResult =
+  | { ok: true }
+  | { ok: false; kind: "invalid"; errors: EnquiryErrors }
+  | { ok: false; kind: "rate-limited" }
+  | { ok: false; kind: "failed" };
+
+/** Posts to the Go API (proxied at /api/enquiries). Never throws. */
+export async function submitEnquiry(input: EnquiryInput & { website: string }): Promise<SubmitResult> {
+  try {
+    const res = await fetch("/api/enquiries", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    });
+    if (res.status === 201) return { ok: true };
+    if (res.status === 429) return { ok: false, kind: "rate-limited" };
+    if (res.status === 400) {
+      const body = (await res.json().catch(() => null)) as { errors?: EnquiryErrors } | null;
+      if (body?.errors && Object.keys(body.errors).length > 0) return { ok: false, kind: "invalid", errors: body.errors };
+    }
+    return { ok: false, kind: "failed" };
+  } catch {
+    return { ok: false, kind: "failed" };
+  }
 }
 
 export const CONFIRMATION_KEY = "jtech-enquiry-confirmation";
