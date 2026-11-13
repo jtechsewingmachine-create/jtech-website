@@ -457,6 +457,11 @@ svg {
   border-left: 1px solid var(--border);
 }
 
+.product-grid--compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 52rem;
+}
+
 .product-card {
   display: flex;
   flex-direction: column;
@@ -871,5 +876,275 @@ svg {
 @media (max-width: 40rem) {
   .locations-strip__link {
     border-right: 0;
+  }
+}
+
+/* --- Machine detail --- */
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 1rem 0 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.breadcrumb li + li::before {
+  content: "/";
+  margin-right: 0.25rem;
+  color: var(--muted);
+}
+
+.breadcrumb [aria-current="page"] {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+}
+
+.detail-top {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+  padding-block: 1.5rem clamp(2.5rem, 6vw, 4rem);
+}
+
+.detail-top .media__pending {
+  aspect-ratio: 16 / 9;
+}
+
+.detail-top__tags {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.detail-top h1 {
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+}
+
+.h-small {
+  font-size: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.detail-top__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin: 1.5rem 0 0.75rem;
+}
+
+.notice {
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--red);
+  background: #fdf0f0;
+}
+
+.pending {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.configs {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.configs li {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+}
+
+.configs p {
+  margin: 0;
+}
+
+.configs__label {
+  font-weight: 600;
+}
+
+.configs__includes,
+.configs__price {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gallery img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.detail-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem clamp(2rem, 5vw, 4rem);
+}
+
+.facts {
+  margin: 1rem 0 1.5rem;
+}
+
+.facts > div {
+  display: grid;
+  grid-template-columns: minmax(8rem, 2fr) 3fr;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.facts dt {
+  font-weight: 600;
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+@media (max-width: 48rem) {
+  .detail-top,
+  .detail-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Enquiry form --- */
+
+.enquiry {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.enquiry__summary {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--surface);
+}
+
+.form {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 40rem;
+}
+
+.form .notice {
+  margin: 0;
+  border-left-color: var(--fg);
+  background: var(--surface);
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field label {
+  font-weight: 600;
+}
+
+.req {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #8a8a8a; /* 3.4:1 against white: visible boundary (WCAG 1.4.11) */
+  border-radius: 2px;
+  background: #fff;
+  color: var(--fg);
+  font: inherit;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.field [aria-invalid="true"] {
+  border: 2px solid var(--red);
+}
+
+.field__hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.field__error {
+  margin: 0;
+  font-weight: 600;
+  color: var(--red);
+}
+
+.field__error::before {
+  content: "Error: ";
+}
+
+.error-summary {
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--red);
+}
+
+.error-summary h2 {
+  font-size: 1.15rem;
+}
+
+.error-summary ul {
+  margin: 0 0 0.75rem;
+  padding-left: 1.25rem;
+}
+
+.error-summary a {
+  min-height: 0;
+  display: inline;
+  color: var(--red);
+}
+
+.form .btn--primary:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.link-row--center {
+  justify-content: center;
+}
+
+.confirmation {
+  max-width: 48rem;
+}
+
+.confirmation__facts {
+  max-width: 32rem;
+}
+
+@media (max-width: 48rem) {
+  .enquiry {
+    grid-template-columns: 1fr;
   }
 }

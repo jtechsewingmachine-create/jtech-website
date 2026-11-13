@@ -25,6 +25,7 @@ test("footer has trade enquiry and prototype notice", async ({ page }) => {
 test("skip link is first tab stop and moves focus to main", async ({ page, isMobile }) => {
   test.skip(isMobile, "keyboard test");
   await page.goto("/");
+  await page.waitForLoadState("load"); // hydration can steal the first Tab otherwise
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Skip to content" });
   await expect(skip).toBeFocused();

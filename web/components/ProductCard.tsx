@@ -29,9 +29,18 @@ export function ProductCard({ product, headingLevel = 3 }: { product: Product; h
   );
 }
 
-export function ProductGrid({ items, headingLevel }: { items: Product[]; headingLevel?: 2 | 3 }) {
+export function ProductGrid({
+  items,
+  headingLevel,
+  compact = false,
+}: {
+  items: Product[];
+  headingLevel?: 2 | 3;
+  /** Two-up grid for short lists such as "other machines". */
+  compact?: boolean;
+}) {
   return (
-    <ul className="product-grid">
+    <ul className={compact ? "product-grid product-grid--compact" : "product-grid"}>
       {items.map((p) => (
         <li key={p.slug}>
           <ProductCard product={p} headingLevel={headingLevel} />

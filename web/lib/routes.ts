@@ -32,6 +32,8 @@ export interface Route {
   title: string;
   /** <meta name="description">. 140–160 characters. */
   description: string;
+  /** Short visible name for breadcrumbs (defaults to the title before "|" or "—"). */
+  breadcrumb?: string;
   /** Sitemap priority hint. Optional. */
   priority?: number;
   /** Set false for a page that should exist but not be indexed. */
@@ -53,6 +55,7 @@ export const routes: Route[] = [
   },
   {
     path: "/machines",
+    breadcrumb: "Machines",
     targetQuery: "jtech sewing machine models",
     intent: "comparison",
     pageType: "pillar",
@@ -62,6 +65,66 @@ export const routes: Route[] = [
       "Browse Jtech sewing machine models and check each one's type, package contents, price status and support details, including what is still awaiting confirmation.",
     priority: 0.9,
   },
+  {
+    path: "/machines/stylish-stitcher",
+    breadcrumb: "Stylish Stitcher",
+    targetQuery: "jtech stylish stitcher",
+    intent: "commercial",
+    pageType: "child",
+    clusterParent: "/machines",
+    title: "Jtech Stylish Stitcher Sewing Machine | Details and Photos",
+    description:
+      "Photos and details of the Jtech Stylish Stitcher sewing machine, with what is confirmed and what is still awaiting confirmation, and how to ask about it.",
+    priority: 0.8,
+  },
+  {
+    path: "/machines/demo-model-2",
+    breadcrumb: "Demo model 2",
+    targetQuery: "jtech demo model 2",
+    intent: "commercial",
+    pageType: "child",
+    clusterParent: "/machines",
+    title: "Jtech Traditional Sewing Machine With Table | Demo Model 2",
+    description:
+      "Demo model 2: a sample Jtech traditional sewing machine listing comparing a head-only option with a table and stand package, with sample prices marked as such.",
+    priority: 0.7,
+  },
+  {
+    path: "/machines/demo-model-3",
+    breadcrumb: "Demo model 3",
+    targetQuery: "jtech demo model 3",
+    intent: "commercial",
+    pageType: "child",
+    clusterParent: "/machines",
+    title: "Jtech Traditional Sewing Machine | Demo Model 3 Listing",
+    description:
+      "Demo model 3: a sample Jtech traditional sewing machine with a table, shown as currently unavailable, with routes to ask about availability or other machines.",
+    priority: 0.6,
+  },
+
+  {
+    path: "/enquiry",
+    targetQuery: "contact jtech",
+    intent: "navigational",
+    pageType: "utility",
+    clusterParent: null,
+    title: "Contact Jtech Sewing Machines | Ask About a Machine",
+    description:
+      "Ask Jtech about a sewing machine, support or a trade enquiry. A short form with your name, number and question; asking is not an order and no payment is taken.",
+    indexable: false,
+  },
+  {
+    path: "/enquiry/confirmation",
+    targetQuery: "your jtech enquiry",
+    intent: "navigational",
+    pageType: "utility",
+    clusterParent: "/enquiry",
+    title: "Enquiry Confirmation | Jtech Sewing Machines",
+    description:
+      "Confirmation of your Jtech enquiry. In this prototype nothing is sent and no order is placed; continue browsing machines or return to the enquiry form.",
+    indexable: false,
+  },
+
 ];
 
 export const routeFor = (path: string): Route => {

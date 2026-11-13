@@ -100,7 +100,7 @@ export function breadcrumbJsonLd(path: string) {
     itemListElement: trail.map((r, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      name: r.path === "/" ? site.name : r.title.split("—")[0].trim(),
+      name: r.path === "/" ? site.name : (r.breadcrumb ?? r.title.split(/[—|]/)[0].trim()),
       item: absoluteUrl(r.path),
     })),
   };

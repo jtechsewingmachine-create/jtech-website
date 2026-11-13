@@ -61,3 +61,24 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-020 — Home targetQuery "jtech sewing machine" (singular)
 2026-11-13 · F-03 · The home h1 reads "Find your next Jtech sewing machine"; SEO rule 3 needs the h1 to carry the target query, so the draft query became singular. `/machines` keeps "jtech sewing machine models" and its h1 now contains it. Both still unverified (D-007). · Review CR-5, QA-1 · — · builder
+
+## D-021 — Machine detail: no Product schema, breadcrumb schema only
+2026-11-13 · F-04 · Product JSON-LD would advertise demo items and mock prices as real offers; only BreadcrumbList (visible trail) is emitted. Add Product schema when verified models and prices exist. · SEO rule 8 + content rules · — · builder
+
+## D-022 — Enquiry: machine is a select in the form, not a "Change machine" link
+2026-11-13 · F-05 · The blueprint's "Change machine" goes back to the listing; a select inside the form lets the visitor change machine without losing typed values. A "browse machines" link is still in the summary. · Simpler and keeps entries. · Blueprint §Enquiry `Change machine` · builder
+
+## D-023 — Simulated submission fails only when offline; confirmation context in sessionStorage without personal data
+2026-11-13 · F-05 · `simulateSubmit` waits 600 ms and fails when `navigator.onLine` is false, giving a real, testable failure path. The confirmation page receives only intent label and machine name via sessionStorage; name and number never leave the form. `/enquiry` renders per request (reads `?model`/`?intent`) and is noindex. · Blueprint: simulated lifecycle with invalid/submitting/failed/success states; privacy finding. · — · builder
+
+## D-024 — F-04 and F-05 reviewed together
+2026-11-13 · F-04/F-05 · The detail → enquiry handoff is the core journey; one review covers both ends. · Same reason as D-019. · — · builder
+
+## D-025 — Detail and enquiry target queries follow their h1
+2026-11-13 · F-04/F-05 · targetQuery became "jtech stylish stitcher", "jtech demo model 2", "jtech demo model 3", "contact jtech", "your jtech enquiry" so each h1 carries its query (SEO rule 3). Still unverified drafts (D-007); revisit with real research and real model names. · Review CR-1 · — · builder
+
+## D-026 — Uppercase URLs 301 to lowercase (middleware)
+2026-11-13 · F-04 · `web/middleware.ts` redirects any non-`/_next`, non-`/api` path containing uppercase letters. · Case-insensitive file systems served prerendered pages for case variants with 200 (QA-4); a lowercase URL is the one true successor. · web/CLAUDE.md rules 6/7 · builder
+
+## D-027 — Enquiry phone rule: 10 digits starting 2–9, optional +91/91/0
+2026-11-13 · F-05 · Rejects 0000000000/1234567890-style input; accepts Indian mobiles and landlines with STD code. Go API (F-07) must mirror it. Owner may tighten later. · QA-2 · — · builder

@@ -3,3 +3,6 @@
 - F-01: "Sewing Machines" tagline in the logo uses system font; outline to paths if a vector tool becomes available.
 - F-02 UI-3: phone header nav links are tightly spaced at 375px; revisit if a fifth link is ever added.
 - F-02 UI-1: card image treatments are uneven (dark studio photo vs grey "Photo pending") until real photos arrive.
+- F-04 UI-5: Retry / Contact support buttons have unequal widths on phones.
+- F-04 UI-3: detail page for models without photos has a large empty media area on desktop; revisit when photos arrive.
+- F-05: error-summary links jump to a field but don't move focus into the input.
