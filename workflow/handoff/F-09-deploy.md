@@ -31,3 +31,8 @@ Attach the domain in Vercel, set `SITE_URL`, remove `SITE_ENV`, redeploy, submit
 - Checked: all 9 routes, sitemap, robots, og/logo/icon 200; unknown route 404; `/Machines` 301; `/_next/image` 200 (Vercel's optimiser).
 - robots.txt `Disallow: /` + `X-Robots-Tag: noindex, nofollow`; canonical/OG use the vercel.app host. Page robots meta now also says noindex on previews (seo.ts).
 - API `/healthz` 200; direct POST without secret 403; warm-up GET 204; test enquiry through the proxy 201. Row check in Supabase pending (MCP was down).
+
+## Domain (2026-11-13)
+- `www.jtechsewingmachines.com` is primary (Vercel default); apex and http 308 to it. GoDaddy DNS: A `@` → 216.198.79.1, CNAME `www` → Vercel's value. Certificate auto-renews.
+- Vercel `SITE_URL=https://www.jtechsewingmachines.com` (Production). Checked: canonical, og:url/og:image, sitemap index + `sitemap/0.xml`, Organization logo all on the domain; still `noindex` + `Disallow: /` (SITE_ENV=preview).
+- To launch: real content, remove prototype labels, Render Starter + Vercel Pro, delete `SITE_ENV`, redeploy, add the domain in Google Search Console and submit `/sitemap.xml`.
