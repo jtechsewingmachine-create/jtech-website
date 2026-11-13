@@ -9,3 +9,6 @@
 - F-06 UI-1: support route grid breaks 3+2 at 768px.
 - F-06 UI-4: support contact column has empty space under the button at 1440px.
 - F-06 QA: /locations empty state is only reachable by emptying `web/lib/locations.ts`.
+- F-08 CR-4: no `/favicon.ico` (app/icon.svg + apple-icon cover modern browsers); add one if old-browser 404s show in logs.
+- F-08 UI: apple-icon.png dot renders black, not logo red; regenerate with `brand/shoot.mjs` when the logo is final.
+- F-08 QA: not covered by automation: real screen readers, real iOS Safari, forced-colors in WebKit, 768px screenshots.

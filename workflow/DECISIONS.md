@@ -103,3 +103,12 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-034 — Enquiry proxy is a Next route handler with a shared secret (supersedes the rewrite in D-032)
 2026-11-13 · F-07 · `web/app/api/enquiries/route.ts` forwards to `API_ORIGIN` with `X-Proxy-Secret` and `X-Client-IP` (from Vercel's x-forwarded-for). The Go API requires the secret in production (403 otherwise; refuses to start without `PROXY_SECRET`), trusts `X-Client-IP` only with a valid secret, and never reads X-Forwarded-For. Rate limiting now counts every request, and JSON with trailing data is rejected. · Review CR-1/CR-2/CR-4, QA-1/QA-2/QA-3/QA-4: the rewrite + left-most XFF let anyone bypass the limit, and the API was reachable directly. · — · builder
+
+## D-035 — Accessibility + cross-browser gates in the test suite
+2026-11-13 · F-08 · `@axe-core/playwright` (dev only) scans every route and the form error/success states for WCAG 2.2 A/AA; heading order, reduced motion, tap targets (≥44px tall, ≥24px wide), sitemap contents, OG image/icon/logo resolution are asserted. A WebKit (Safari engine) project runs the suite except Tab-key tests (Safari's default skips links) and one back/forward/reload test that crashes the WebKit engine itself. · Blueprint a11y findings ask for evidence, not intent. · — · builder
+
+## D-036 — Social card, raster logo, favicon
+2026-11-13 · F-08 · `public/og.png` (1200×630) rendered from HTML with the generated studio image and the logo; `public/logo.png` (transparent) for Organization JSON-LD, since Google requires a raster logo; `app/icon.svg` and `app/apple-icon.png` from the J mark. Regenerate if the logo changes. · Starter referenced a missing /og.png. · — · builder
+
+## D-037 — WebP only for next/image; focus ring white on dark surfaces
+2026-11-13 · F-08 · `images.formats` is `["image/webp"]` (AVIF dropped). Focus outline uses `var(--focus, var(--red))`; hero, `.band--dark` and footer set `--focus` to `--on-dark`. The confirmation page moves focus to its result heading after client navigation. · QA-r1 High: cold AVIF encodes of the 1800px hero hung `/_next/image` (Accept avif) and timed out page loads; WebP-only requests returned in 0.1s. QA-r1 Medium: red focus ring was 2.85:1 on #1E1E1E (WCAG 1.4.11 needs 3:1), and focus landed on <body> after submit. · — · builder

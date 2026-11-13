@@ -23,6 +23,7 @@
     "postcss": "^8.5.29"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@playwright/test": "^1.56.1",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",

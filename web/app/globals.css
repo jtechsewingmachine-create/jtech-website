@@ -132,7 +132,7 @@ svg {
 }
 
 :focus-visible {
-  outline: 3px solid var(--red);
+  outline: 3px solid var(--focus, var(--red));
   outline-offset: 3px;
 }
 
@@ -285,6 +285,7 @@ svg {
 .site-footer {
   background: var(--dark);
   color: var(--on-dark);
+  --focus: var(--on-dark); /* red is 2.85:1 on dark, under WCAG 1.4.11's 3:1 */
   padding-block: 3rem 1.5rem;
 }
 
@@ -583,6 +584,7 @@ svg {
 .hero {
   background: #18181b; /* sampled from the studio image backdrop */
   color: var(--on-dark);
+  --focus: var(--on-dark);
   overflow: hidden;
 }
 
@@ -621,15 +623,23 @@ svg {
   margin: 0 -10% 0 0;
 }
 
+.hero__media picture,
+.hero__media > img {
+  display: block;
+}
+
+.hero__frame {
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+
 .hero__media img {
   display: block;
   width: 100%;
   height: auto;
-  /* Feather every edge so the studio backdrop melts into the hero background. */
-  mask-image:
-    linear-gradient(to right, transparent, #000 7%, #000 93%, transparent),
-    linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
-  mask-composite: intersect;
+  /* Feather every edge so the studio backdrop melts into the hero background. One gradient per element
+     (vertical here, horizontal on the wrapper): mask-composite gets mis-prefixed for Safari by the CSS
+     build and hides the image. */
+  mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
 }
 
 .hero__media figcaption {
@@ -732,6 +742,7 @@ svg {
 .band--dark {
   background: var(--dark);
   color: var(--on-dark);
+  --focus: var(--on-dark);
 }
 
 .band--dark .accent {
@@ -1085,6 +1096,15 @@ svg {
 
 .field textarea {
   resize: vertical;
+}
+
+/* Safari ignores min-height on native selects (26px tall); draw our own so the target stays 48px. */
+.field select {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23141414' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
 }
 
 .field [aria-invalid="true"] {

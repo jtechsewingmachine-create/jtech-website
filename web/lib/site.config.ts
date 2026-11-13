@@ -20,7 +20,7 @@ export const site = {
   organization: {
     legalName: "Jtech Sewing Machines", // awaiting owner confirmation
     foundingDate: "", // ISO. Unknown: left empty so schema omits it rather than inventing one.
-    logo: "/logo.svg", // relative to url
+    logo: "/logo.png", // relative to url; raster, as Google requires for Organization logos
     // Every profile that represents this entity. Feeds schema.org sameAs.
     sameAs: [
       // "https://www.linkedin.com/company/example",

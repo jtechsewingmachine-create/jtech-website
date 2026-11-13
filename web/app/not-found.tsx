@@ -15,7 +15,7 @@ import type { Metadata } from "next";
  */
 export const metadata: Metadata = {
   title: "Page not found",
-  robots: { index: false, follow: true },
+  // No robots field: Next already emits noindex for not-found, and a second tag duplicated it.
 };
 
 export default function NotFound() {

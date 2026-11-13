@@ -19,7 +19,10 @@ export function DemoVideo({ src, poster, describedBy }: { src: string; poster: s
   const toggle = () => {
     const v = ref.current;
     if (!v) return;
-    if (v.paused) v.play().catch(() => setFailed(true));
+    // Pausing before playback starts rejects play() with AbortError: that is the visitor's choice, not a failure.
+    if (v.paused) v.play().catch((err: unknown) => {
+      if ((err as { name?: string })?.name !== "AbortError") setFailed(true);
+    });
     else v.pause();
   };
 

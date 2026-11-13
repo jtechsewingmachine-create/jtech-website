@@ -46,14 +46,16 @@ export default function Home() {
           </div>
           {hero && (
             <figure className="hero__media">
-              <Img
-                src={hero.src}
-                alt={hero.alt}
-                width={hero.width}
-                height={hero.height}
-                sizes="(max-width: 48rem) 100vw, 60vw"
-                priority
-              />
+              <div className="hero__frame">
+                <Img
+                  src={hero.src}
+                  alt={hero.alt}
+                  width={hero.width}
+                  height={hero.height}
+                  sizes="(max-width: 48rem) 100vw, 60vw"
+                  priority
+                />
+              </div>
               <figcaption>Generated studio image of the sample unit</figcaption>
             </figure>
           )}

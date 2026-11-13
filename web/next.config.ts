@@ -52,8 +52,9 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
 
   images: {
-    // Modern formats negotiated automatically. AVIF first, then WebP.
-    formats: ["image/avif", "image/webp"],
+    // WebP only: cold AVIF encodes of the large hero hung /_next/image under
+    // load in F-08 QA (D-037). WebP is near the same size and encodes fast.
+    formats: ["image/webp"],
     // Add any external image hosts here; next/image refuses unlisted ones.
     remotePatterns: [],
   },

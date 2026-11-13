@@ -14,8 +14,8 @@ Main doc: `dev_ref/wireframe output/jtech-website-handoff.md` (called "Blueprint
 | F-05 | Enquiry form + confirmation (simulated in browser) | F-04 | Blueprint §Enquiry, §Enquiry Confirmation | UI ref (style) | Yes | done | 2026-11-13 |
 | F-06 | Support `/support` + Locations `/locations` | F-01 | Blueprint §Support, §Locations | UI ref (style) | Yes | done | 2026-11-13 |
 | F-07 | Go enquiry API + connect form | F-05 | D-002, D-006, D-030, D-034 | — | No | done | 2026-11-13 |
-| F-08 | SEO + accessibility hardening pass | F-03..F-07 | starter CLAUDE.md, Blueprint §States/a11y findings | — | Yes | todo | |
-| F-09 | Deploy (web + api) | F-08 | starter README | — | No | blocked (needs hosting decision) | |
+| F-08 | SEO + accessibility hardening pass | F-03..F-07 | starter CLAUDE.md, Blueprint §States/a11y findings | — | Yes | done (2026-11-13) | |
+| F-09 | Deploy (web + api) | F-08 | starter README | — | No | blocked (needs Vercel + Render accounts, domain) | |
 
 ## Feature details
 ### F-00 — Project foundation

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-192 297 900 900">
+  <!-- The J and dot from the logo (public/logo.svg), centred on a white rounded square. -->
+  <rect x="-192" y="297" width="900" height="900" rx="170" fill="#fff"/>
+  <path fill="#b3121d" d="M165 318H289V960C287 1062 232 1140 125 1176C186 1120 207 1060 207 990V354H165Z" transform="translate(60 0) scale(1 .96) translate(0 26)"/>
+  <circle cx="426" cy="683" r="46" fill="#111"/>
+</svg>

@@ -9,6 +9,13 @@ export default defineConfig({
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
+    // Safari engine: real H.264 playback and mask-image/-webkit- checks.
+    // Tab-key tests are excluded: Safari's default (macOS "Keyboard navigation" off) only tabs to form
+    // controls, so links are skipped by design; Chromium covers keyboard order.
+    // "browser back from confirmation" crashes the WebKit engine itself on reload (Page crashed);
+    // Chromium covers that flow. One retry: Playwright's WebKit build occasionally crashes on back/forward + reload (engine
+    // crash, not an app error); retried passes are still reported as "flaky".
+    { name: "webkit", use: { ...devices["Desktop Safari"] }, grepInvert: /keyboard: |focus indicator: |browser back from confirmation/ },
   ],
   // Tests run against the production build, which is what crawlers and users get,
   // with the real Go API behind the /api/enquiries route handler (in-memory store: no Supabase env).

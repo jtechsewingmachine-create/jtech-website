@@ -29,12 +29,18 @@ export function ConfirmationDetails() {
     setCtx(taken.current);
   }, []);
 
+  // Client navigation from the form leaves focus on <body>; move it to the result.
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (ctx !== undefined) headingRef.current?.focus();
+  }, [ctx]);
+
   if (ctx === undefined) return <p className="small">Loading confirmation details…</p>;
 
   if (ctx === null) {
     return (
       <div className="empty-state">
-        <h2>No confirmation details are available.</h2>
+        <h2 ref={headingRef} tabIndex={-1}>No confirmation details are available.</h2>
         <p>If you sent an enquiry, it was received only if you saw the &ldquo;Enquiry sent&rdquo; message. Return to the enquiry or browse the machines.</p>
         <div className="link-row link-row--center">
           <Link href="/enquiry" className="btn btn--primary">
@@ -50,7 +56,7 @@ export function ConfirmationDetails() {
 
   return (
     <div className="confirmation__success">
-      <h2>
+      <h2 ref={headingRef} tabIndex={-1}>
         Enquiry <span className="accent">sent</span>
       </h2>
       <p className="lede">
