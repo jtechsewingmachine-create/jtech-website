@@ -15,7 +15,7 @@ Main doc: `dev_ref/wireframe output/jtech-website-handoff.md` (called "Blueprint
 | F-06 | Support `/support` + Locations `/locations` | F-01 | Blueprint §Support, §Locations | UI ref (style) | Yes | done | 2026-11-13 |
 | F-07 | Go enquiry API + connect form | F-05 | D-002, D-006, D-030, D-034 | — | No | done | 2026-11-13 |
 | F-08 | SEO + accessibility hardening pass | F-03..F-07 | starter CLAUDE.md, Blueprint §States/a11y findings | — | Yes | done (2026-11-13) | |
-| F-09 | Deploy (web + api) | F-08 | starter README | — | No | blocked (needs Vercel + Render accounts, domain) | |
+| F-09 | Deploy (web + api) | F-08 | starter README | — | No | done (2026-11-13, preview) | |
 
 ## Feature details
 ### F-00 — Project foundation

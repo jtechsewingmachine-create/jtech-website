@@ -115,3 +115,6 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-038 — Free hosting plans for the private preview
 2026-11-13 · F-09 · Owner chose Render free (API) and Vercel Hobby (web) while the site is a noindexed preview. Render free sleeps after 15 min, so the proxy timeout is 55s (`maxDuration` 60), and the enquiry page sends a GET to `/api/enquiries` on load, which pings the API's `/healthz` to wake it. Before public launch: Render Starter (always on) and Vercel Pro (Hobby is non-commercial per Vercel's terms). · Owner decision via question. · — · owner
+
+## D-039 — Domain bought; enquiry reading deferred to a separate admin site
+2026-11-13 · F-09 · Owner bought `jtechsewingmachines.com`. Nobody reads enquiries yet; the owner will build a separate admin-facing site later, and notifications are deferred until then. This site stays the public product site only. Enquiries save end to end (verified live: test row in `public.enquiries`). · Owner answers to the open questions. · — · owner
