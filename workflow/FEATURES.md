@@ -8,8 +8,8 @@ Main doc: `dev_ref/wireframe output/jtech-website-handoff.md` (called "Blueprint
 |----|---------|-----------|------|------------|-----|--------|---------|
 | F-00 | Project foundation | — | starter pack, D-001 | — | Yes | done | 2026-11-13 |
 | F-01 | Site shell: brand styles, header, footer, mobile nav | F-00 | Blueprint §Navigation | UI ref (header/footer) | Yes | done | 2026-11-13 |
-| F-02 | Demo catalogue data + Machines listing `/machines` | F-01 | Blueprint §Machines, §Product listing | UI ref (demo range) | Yes | todo | |
-| F-03 | Homepage `/` | F-02 | Blueprint §Homepage | UI ref (whole page) | Yes | todo | |
+| F-02 | Demo catalogue data + Machines listing `/machines` | F-01 | Blueprint §Machines, §Product listing | UI ref (demo range) | Yes | done | 2026-11-13 |
+| F-03 | Homepage `/` | F-02 | Blueprint §Homepage | UI ref (whole page) | Yes | done | 2026-11-13 |
 | F-04 | Product detail `/machines/[slug]` | F-02 | Blueprint §Representative Machine Detail, D-003/D-004 | UI ref (style) | Yes | todo | |
 | F-05 | Enquiry form + confirmation (simulated in browser) | F-04 | Blueprint §Enquiry, §Enquiry Confirmation | UI ref (style) | Yes | todo | |
 | F-06 | Support `/support` + Locations `/locations` | F-01 | Blueprint §Support, §Locations | UI ref (style) | Yes | todo | |

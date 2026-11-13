@@ -40,3 +40,24 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-013 — Footer "Contact" → `/support#contact`
 2026-11-13 · F-01 · Blueprint maps Contact → Support screen; the anchor lands on the contact part of that page (built in F-06). · — · — · builder
+
+## D-014 — Demo model 1 is the "Stylish Stitcher" from the supplied photos
+2026-11-13 · F-02 · The real Jtech sample unit in `dev_ref/video image generation/assets` is labelled "Stylish Stitcher" on its body, so Demo model 1 uses that name and those photos. Only facts visible on the unit are stated (two dials); the "Japanese Technology" body text is not repeated as a claim. Models 2–3 have no photos and show the "Photo pending" state. · Human approved using the assets. · Blueprint "Demo model 1/2/3" naming · builder
+
+## D-015 — Image labelling
+2026-11-13 · F-02 · Every product image carries a caption: "Photo of a sample unit" or "Generated studio image of the sample unit". The generated video is captioned as not a recorded demonstration. Gemini watermarks are cropped out (stills by crop; video by a CSS scale-crop until ffmpeg is available). · Blueprint: generated imagery must not be presented as evidence. · — · builder
+
+## D-016 — Mock prices only on Demo model 2, always labelled "sample price (not a real offer)"
+2026-11-13 · F-02 · Shows the head-only vs package price difference the blueprint asks to test; every other price reads "awaiting confirmation". · Blueprint decision on mock prices · builder
+
+## D-017 — Home hero is dark, not light grey
+2026-11-13 · F-03 · The UI ref hero is light grey, but every usable product image has a dark studio backdrop; a dark hero lets the image blend in (edge-feathered) instead of sitting as a dark box on grey. Rest of the page follows the UI ref order and styling. · Cinematic look the owner asked for; real assets. · UI ref hero · builder
+
+## D-018 — Home video uses its own Play/Pause button, no native controls
+2026-11-13 · F-03 · Native controls get clipped by the watermark crop. One button covers the blueprint's media_playing/media_paused states; nothing autoplays; poster = still fallback; play failure shows a status message. · Simpler than per-browser control styling. · Blueprint §Homepage media states · builder
+
+## D-019 — F-02 and F-03 reviewed together
+2026-11-13 · F-02/F-03 · Both share the product card and data; one review round covers both. · Halves review cost with no loss of coverage. · — · builder
+
+## D-020 — Home targetQuery "jtech sewing machine" (singular)
+2026-11-13 · F-03 · The home h1 reads "Find your next Jtech sewing machine"; SEO rule 3 needs the h1 to carry the target query, so the draft query became singular. `/machines` keeps "jtech sewing machine models" and its h1 now contains it. Both still unverified (D-007). · Review CR-5, QA-1 · — · builder

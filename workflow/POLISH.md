@@ -1,3 +1,5 @@
 # Polish Backlog — low-priority items to fix later
 - F-01 UI-3/CR-4 follow-up: `public/logo.svg` and `components/Logo.tsx` are two copies of the logo (public copy needed for Organization schema). Keep in sync, or generate one from the other.
 - F-01: "Sewing Machines" tagline in the logo uses system font; outline to paths if a vector tool becomes available.
+- F-02 UI-3: phone header nav links are tightly spaced at 375px; revisit if a fifth link is ever added.
+- F-02 UI-1: card image treatments are uneven (dark studio photo vs grey "Photo pending") until real photos arrive.

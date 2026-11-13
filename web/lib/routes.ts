@@ -42,7 +42,7 @@ export interface Route {
 export const routes: Route[] = [
   {
     path: "/",
-    targetQuery: "jtech sewing machines",
+    targetQuery: "jtech sewing machine",
     intent: "navigational",
     pageType: "pillar",
     clusterParent: null,
@@ -50,6 +50,17 @@ export const routes: Route[] = [
     description:
       "Explore Jtech sewing machines, understand what's included and what to consider before choosing, then ask about a machine. Private prototype with sample content.",
     priority: 1,
+  },
+  {
+    path: "/machines",
+    targetQuery: "jtech sewing machine models",
+    intent: "comparison",
+    pageType: "pillar",
+    clusterParent: null,
+    title: "Jtech Sewing Machine Models | Compare What's Included",
+    description:
+      "Browse Jtech sewing machine models and check each one's type, package contents, price status and support details, including what is still awaiting confirmation.",
+    priority: 0.9,
   },
 ];
 
