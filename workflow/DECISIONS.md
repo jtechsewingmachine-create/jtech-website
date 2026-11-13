@@ -88,3 +88,9 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-029 — Decorative arrow kept out of link names
 2026-11-13 · F-06 · `.link-arrow::after` uses `content: "→" / ""` so screen readers don't read "right arrow"; hidden link suffixes read "for X"/"at X" (e.g. "Contact about this for General repairs"). Affects every arrow link site-wide. · Found while testing accessible names. · — · builder
+
+## D-030 — Enquiries are stored for real (human)
+2026-11-13 · F-07 · Go API validates and saves enquiries to a Supabase Postgres table, server-side only (no browser access; RLS on, no anon policies), deleted after 90 days. Form drops the "simulation" wording and gains a short privacy line. Who reads enquiries is still to be named by the owner. · Human chose "Store for real". · Supersedes the simulated-only parts of D-006/D-023 · human
+
+## D-031 — Hosting: Next.js on Vercel, Go API on Render (human)
+2026-11-13 · F-09 · Vercel paid plan once commercial (starter README note). Human creates the accounts; builder writes the config. · Human choice · — · human
