@@ -46,6 +46,7 @@ test("429 shows the rate-limit message and keeps values", async ({ page }) => {
 test("503 from the API shows the failure state with Retry", async ({ page }) => {
   let calls = 0;
   await page.route("**/api/enquiries", (r) => {
+    if (r.request().method() !== "POST") return r.fulfill({ status: 204 }); // page-load warm-up ping
     calls++;
     return calls === 1
       ? r.fulfill({ status: 503, contentType: "application/json", body: '{"error":"x"}' })
@@ -72,4 +73,11 @@ test("the Go API refuses direct calls that bypass the site (no proxy secret)", a
     data: { name: "Asha", phone: "9876543210", intent: "general" },
   });
   expect(res.status()).toBe(403);
+});
+
+test("warm-up: the enquiry page pings the API on load and GET answers 204", async ({ page, request }) => {
+  const ping = page.waitForRequest((r) => r.url().endsWith("/api/enquiries") && r.method() === "GET");
+  await page.goto("/enquiry");
+  await ping;
+  expect((await request.get("/api/enquiries")).status()).toBe(204);
 });

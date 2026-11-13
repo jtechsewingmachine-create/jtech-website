@@ -784,6 +784,13 @@ svg {
   background: #000;
 }
 
+/* Pre-hydration the video has native controls and can take focus, but Chromium skips :focus-visible on it,
+   and the watermark crop would clip its own outline; ring the frame instead. */
+.video__frame:has(video:focus) {
+  outline: 3px solid var(--focus, var(--red));
+  outline-offset: 3px;
+}
+
 .video__frame video {
   display: block;
   width: 100%;

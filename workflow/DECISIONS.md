@@ -112,3 +112,6 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-037 — WebP only for next/image; focus ring white on dark surfaces
 2026-11-13 · F-08 · `images.formats` is `["image/webp"]` (AVIF dropped). Focus outline uses `var(--focus, var(--red))`; hero, `.band--dark` and footer set `--focus` to `--on-dark`. The confirmation page moves focus to its result heading after client navigation. · QA-r1 High: cold AVIF encodes of the 1800px hero hung `/_next/image` (Accept avif) and timed out page loads; WebP-only requests returned in 0.1s. QA-r1 Medium: red focus ring was 2.85:1 on #1E1E1E (WCAG 1.4.11 needs 3:1), and focus landed on <body> after submit. · — · builder
+
+## D-038 — Free hosting plans for the private preview
+2026-11-13 · F-09 · Owner chose Render free (API) and Vercel Hobby (web) while the site is a noindexed preview. Render free sleeps after 15 min, so the proxy timeout is 55s (`maxDuration` 60), and the enquiry page sends a GET to `/api/enquiries` on load, which pings the API's `/healthz` to wake it. Before public launch: Render Starter (always on) and Vercel Pro (Hobby is non-commercial per Vercel's terms). · Owner decision via question. · — · owner

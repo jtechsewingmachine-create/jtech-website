@@ -33,7 +33,10 @@ export function EnquiryForm({
   const [status, setStatus] = useState<Status>("idle");
   // Until hydrated, a native submit would bypass validation; keep the button inert until then.
   const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
+  useEffect(() => {
+    setHydrated(true);
+    fetch("/api/enquiries", { cache: "no-store" }).catch(() => {}); // wake the API early (D-038)
+  }, []);
   const summaryRef = useRef<HTMLDivElement>(null);
   const failRef = useRef<HTMLDivElement>(null);
   // Bumped after each submit outcome; the effect runs after React commits, so the target exists.

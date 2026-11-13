@@ -10,8 +10,13 @@
 export const site = {
   // --- Required: change these for every new project ---
   name: "Jtech Sewing Machines",
-  // shortcut: domain not decided yet; set SITE_URL in each deployment (F-09).
-  url: (process.env.SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""), // no trailing slash
+  // SITE_URL once the domain exists; until then Vercel's own production hostname, never localhost (F-09).
+  url: (
+    process.env.SITE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "http://localhost:3000")
+  ).replace(/\/$/, ""), // no trailing slash
   description:
     "Jtech sewing machines and traditional sewing-machine tables. Explore the range, see what each machine includes, and ask about a machine.",
   locale: "en",

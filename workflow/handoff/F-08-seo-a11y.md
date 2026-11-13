@@ -37,7 +37,8 @@ Added an automated accessibility audit (axe-core on all 10 routes plus form erro
 - OG image honesty: it uses the generated studio image (captioned elsewhere as generated; the card itself has no caption).
 
 ## Round 1 triage (2026-11-13)
-- QA High (`/_next/image` AVIF hang): `images.formats` now WebP only (D-037). Full suite on a cold image cache: 573 passed, 11 skipped, 0 failed.
+- QA High (`/_next/image` AVIF hang): `images.formats` now WebP only (D-037). Correction (F-09): the first cold-cache run after this change was misread as clean (its exit code was hidden by a pipe); it had ~60 WebKit/page-load timeouts. Since then the hang has not reproduced: 36 concurrent cold image requests all answered in <0.5s, and two cold-cache full runs had no timeouts. Root cause unproven; suspected local resource contention. Production is unaffected either way: Vercel serves `/_next/image` from its own image service, not this Node process.
+- F-09 follow-up: a pre-hydration `<video>` (native controls) could take keyboard focus with no visible ring in Chromium. `.video__frame:has(video:focus)` now draws it; no-JS regression test added.
 - QA Medium (focus ring 2.85:1 on dark): `--focus` set to `--on-dark` on hero, `.band--dark`, footer.
 - QA Medium (focus on body after submit): ConfirmationDetails focuses its result heading.
 - CR-1: webkit `retries` removed; "focus indicator:" added to webkit grepInvert (Safari doesn't tab to links).

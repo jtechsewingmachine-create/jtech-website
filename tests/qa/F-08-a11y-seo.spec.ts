@@ -115,3 +115,16 @@ test("hero image is not hidden by a mis-prefixed mask-composite (Safari regressi
   // A masked-out image renders as flat backdrop, which compresses to a tiny PNG.
   expect((await img.screenshot()).length).toBeGreaterThan(20_000);
 });
+
+test.describe("no JS", () => {
+  test.use({ javaScriptEnabled: false });
+  test("keyboard focus on the native-controls video shows a ring on its frame", async ({ page, isMobile, browserName }) => {
+    test.skip(isMobile || browserName === "webkit", "keyboard focus; Safari does not tab to media");
+    await page.goto("/");
+    const video = page.locator(".video__frame video");
+    await video.focus();
+    await expect(video).toBeFocused();
+    const o = await page.locator(".video__frame").evaluate((f) => getComputedStyle(f).outlineStyle + " " + getComputedStyle(f).outlineWidth);
+    expect(o).toBe("solid 3px");
+  });
+});

@@ -1,0 +1,23 @@
+# Render Blueprint for the Go enquiry API (D-031). New > Blueprint in the Render dashboard reads this file.
+services:
+  - type: web
+    name: jtech-api
+    runtime: go
+    rootDir: api
+    region: singapore # nearest Render region to India
+    plan: free # sleeps after 15 min idle; the enquiry page wakes it on load. Upgrade to starter before launch (D-038)
+    buildCommand: go build -trimpath -o app .
+    startCommand: ./app
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: RATE_LIMIT
+        value: "5" # enquiries per visitor IP per 10 minutes
+      - key: PROXY_SECRET
+        generateValue: true # copy this value into Vercel's PROXY_SECRET
+      - key: SUPABASE_URL
+        value: https://txcqdsbgejhyfcvamwjm.supabase.co
+      - key: SUPABASE_SECRET_KEY
+        sync: false # prompted in the dashboard; never committed

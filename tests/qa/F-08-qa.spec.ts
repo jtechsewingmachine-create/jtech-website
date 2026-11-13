@@ -122,7 +122,8 @@ const ratio = (a: number[], b: number[]) => {
 async function focusInfo(page: Page) {
   return page.evaluate(() => {
     const el = document.activeElement as HTMLElement;
-    const s = getComputedStyle(el);
+    // A focused <video> is ringed by its frame (the watermark crop would clip its own outline).
+    const s = getComputedStyle(el.tagName === "VIDEO" ? (el.closest(".video__frame") as HTMLElement) : el);
     // effective background: nearest ancestor with a non-transparent bg
     let bg = "rgb(255,255,255)";
     for (let n: HTMLElement | null = el.parentElement; n; n = n.parentElement) {

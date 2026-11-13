@@ -17,6 +17,8 @@ for (const [label, url] of [["proxy", PROXY], ["direct", DIRECT]] as const) {
     for (const m of ["get", "put", "delete", "patch"] as const) {
       test(`${m.toUpperCase()} is not accepted`, async ({ request }) => {
         const r = await request[m](url, { data: ok });
+        // GET on the proxy is the warm-up ping (D-038): 204, empty, stores nothing.
+        if (m === "get" && url === PROXY) return expect([r.status(), await r.text()]).toEqual([204, ""]);
         expect([404, 405]).toContain(r.status());
       });
     }

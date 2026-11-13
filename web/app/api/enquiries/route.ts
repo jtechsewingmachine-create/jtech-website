@@ -6,6 +6,9 @@
  * rejects direct calls in production, so X-Forwarded-For can't be used to dodge the rate limit.
  */
 export const dynamic = "force-dynamic";
+// Room for a cold start: on Render's free plan the API sleeps when idle and takes ~50s to wake (D-038).
+export const maxDuration = 60;
+const API_TIMEOUT_MS = 55_000;
 
 const MAX_BODY = 8 * 1024;
 
@@ -42,7 +45,7 @@ export async function POST(req: Request) {
       method: "POST",
       headers,
       body,
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(API_TIMEOUT_MS),
       cache: "no-store",
     });
     const out = new Headers({ "Content-Type": "application/json", "Cache-Control": "no-store" });
@@ -52,4 +55,13 @@ export async function POST(req: Request) {
   } catch {
     return json(503, { error: "enquiry service unavailable" });
   }
+}
+
+/** Warm-up: the enquiry page pings this on load so a sleeping API is awake by the time the visitor submits. */
+export async function GET() {
+  const api = process.env.API_ORIGIN;
+  if (api) {
+    await fetch(`${api.replace(/\/$/, "")}/healthz`, { cache: "no-store", signal: AbortSignal.timeout(API_TIMEOUT_MS) }).catch(() => {});
+  }
+  return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
 }
