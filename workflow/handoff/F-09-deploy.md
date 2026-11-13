@@ -25,3 +25,9 @@ Status: config in the repo; waiting on accounts (human). Hosting per D-031, plan
 
 ## Launch (later, owner's call)
 Attach the domain in Vercel, set `SITE_URL`, remove `SITE_ENV`, redeploy, submit the sitemap in Search Console.
+
+## Live (2026-11-13)
+- Web: https://jtech-website-rosy.vercel.app (Vercel Hobby, `SITE_ENV=preview`). API: https://jtech-api-xb85.onrender.com (Render free, Singapore).
+- Checked: all 9 routes, sitemap, robots, og/logo/icon 200; unknown route 404; `/Machines` 301; `/_next/image` 200 (Vercel's optimiser).
+- robots.txt `Disallow: /` + `X-Robots-Tag: noindex, nofollow`; canonical/OG use the vercel.app host. Page robots meta now also says noindex on previews (seo.ts).
+- API `/healthz` 200; direct POST without secret 403; warm-up GET 204; test enquiry through the proxy 201. Row check in Supabase pending (MCP was down).

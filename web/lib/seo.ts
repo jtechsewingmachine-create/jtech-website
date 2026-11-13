@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { site, absoluteUrl } from "./site.config";
+import { site, absoluteUrl, isIndexableDeployment } from "./site.config";
 import { routeFor } from "./routes";
 
 /**
@@ -20,7 +20,7 @@ export function seoFor(path: string): Metadata {
     description: route.description,
     alternates: { canonical },
     robots:
-      route.indexable === false
+      route.indexable === false || !isIndexableDeployment() // previews: meta agrees with robots.txt and X-Robots-Tag
         ? { index: false, follow: true }
         : {
             index: true,
