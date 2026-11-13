@@ -18,7 +18,7 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 2026-11-13 · F-00 · Content routes stay `indexable` in `lib/routes.ts`; the prototype deployment sets `SITE_ENV=preview`, which makes robots.txt disallow everything and sends `X-Robots-Tag: noindex`. Enquiry + confirmation are `indexable: false` permanently (utility pages). · The starter's render gate only checks indexable routes, so marking every page noindex would switch the gate off. Same privacy result, gates stay on. · STARTER-TEMPLATE-HANDOFF said indexable:false per page — deviation · builder
 
 ## D-006 — Enquiry storage target is Supabase Postgres, behind the Go API
-2026-11-13 · F-07 · Until the Supabase project is reachable, the Go API validates and returns success without storing (simulated, as the blueprint requires). · Supabase connector in this session is signed into a different account and cannot see project `txcqdsbgejhyfcvamwjm`. · — · builder (needs human for DB access)
+2026-11-13 · F-07 · Go API stores enquiries in Supabase project `txcqdsbgejhyfcvamwjm` (ap-southeast-1, Postgres 17, empty `public` schema as of 2026-11-13; connector access confirmed). Table created by migration in F-07. · Keeps one database, reached only from the server. · — · builder
 
 ## D-007 — Draft target queries
 2026-11-13 · F-00 · Registry needs a unique non-empty `targetQuery`; the blueprint has none (UNVERIFIED). Using plain drafts like "jtech sewing machines", marked unverified in `lib/routes.ts`. · Gate requirement. · — · builder
