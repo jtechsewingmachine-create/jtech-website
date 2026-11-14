@@ -10,6 +10,9 @@
     "check:routes": "node scripts/check-routes.mjs",
     "check:render": "node scripts/verify.mjs",
     "check:deps": "npm audit --audit-level=high",
+    "check:live": "node scripts/check-live.mjs",
+    "report:search": "node scripts/search-report.mjs",
+    "test:monitoring": "node --test scripts/search-report.test.mjs",
     "verify": "npm run check:routes && npm run build && node scripts/verify.mjs",
     "test": "playwright test"
   },

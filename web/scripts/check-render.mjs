@@ -20,6 +20,21 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const BASE = (process.argv[2] || process.env.CHECK_URL || "http://localhost:3000").replace(/\/$/, "");
+
+/**
+ * Which policy to assert. Mirrors isIndexableDeployment() in lib/site.config.ts
+ * — that file is the source of truth; this is the same rule in a dependency-free
+ * script, so keep the two in step.
+ *
+ * Added after this checker wrongly failed a preview build: a preview correctly
+ * serves a blanket `Disallow: /` and advertises no sitemap, and the checker
+ * asserted production rules in every mode. Production rules are never relaxed
+ * to make a preview pass — the two modes assert different, equally strict
+ * things.
+ */
+const INDEXABLE = [process.env.VERCEL_ENV, process.env.SITE_ENV]
+  .filter(Boolean)
+  .every((signal) => signal === "production");
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const errors = [];
 const warnings = [];
@@ -114,6 +129,31 @@ async function checkRoute(route) {
   const canonical = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)/i)?.[1];
   if (!canonical) fail(route.path, "no canonical link");
   else if (!/^https?:\/\//.test(canonical)) fail(route.path, `canonical "${canonical}" is not absolute`);
+  else {
+    // Existing is not enough: a canonical pointing elsewhere hands the page's
+    // ranking to that URL. Path always; host too when checking a live domain,
+    // which catches a site.url still set to the template's example.com.
+    const c = new URL(canonical);
+    if (c.pathname.replace(/\/$/, "") !== route.path.replace(/\/$/, "")) {
+      fail(route.path, `canonical points at ${c.pathname}, not this page`);
+    }
+    const live = new URL(BASE);
+    if (!/^(localhost|127\.0\.0\.1)$/.test(live.hostname) && c.hostname !== live.hostname) {
+      fail(route.path, `canonical host is ${c.hostname} but the site is served from ${live.hostname} — check site.url in lib/site.config.ts`);
+    }
+  }
+
+  // --- Accidental deindexing: an indexable page told not to be indexed. The
+  //     most common and most brutal silent failure, usually a staging setting
+  //     that reached production. Production only; previews must noindex. ---
+  if (INDEXABLE) {
+    if (/noindex/i.test(res.headers.get("x-robots-tag") ?? "")) {
+      fail(route.path, "X-Robots-Tag says noindex on a page that must be indexed");
+    }
+    if (/<meta[^>]+name=["'](?:robots|googlebot)["'][^>]+content=["'][^"']*noindex/i.test(html)) {
+      fail(route.path, "a robots meta tag says noindex on a page that must be indexed");
+    }
+  }
 
   // --- Open Graph ---
   for (const prop of ["og:title", "og:description", "og:url", "og:image"]) {
@@ -135,6 +175,14 @@ async function checkRoute(route) {
     }
     if (!/\bwidth=/.test(tag) || !/\bheight=/.test(tag)) {
       warn(route.path, `an <img> has no explicit dimensions (layout shift): ${tag.slice(0, 80)}`);
+    }
+  }
+
+  // --- No autoplaying video (CLAUDE.md rule 15). It spends the LCP budget before
+  //     the user has asked for anything, and moves the page on load. ---
+  for (const [tag] of html.matchAll(/<video\b[^>]*>/gi)) {
+    if (/\sautoplay(?:[\s=>]|$)/i.test(tag)) {
+      fail(route.path, `a <video> autoplays; video must play only on user request: ${tag.slice(0, 80)}`);
     }
   }
 
@@ -182,8 +230,18 @@ await checkStatus("/guides/no-such-child-xyz123", 404, "404 handling");
 const robots = await checkStatus("/robots.txt", 200, "robots.txt");
 if (robots) {
   const body = await robots.text();
-  if (!/sitemap:/i.test(body)) fail("robots.txt", "does not reference the sitemap");
-  if (/^\s*Disallow:\s*\/\s*$/im.test(body)) fail("robots.txt", "contains a blanket Disallow: /");
+  if (INDEXABLE) {
+    if (!/sitemap:/i.test(body)) fail("robots.txt", "does not reference the sitemap");
+    if (/^\s*Disallow:\s*\/\s*$/im.test(body)) fail("robots.txt", "contains a blanket Disallow: /");
+  } else {
+    // A non-production deployment must keep itself out of the index entirely.
+    if (!/^\s*Disallow:\s*\/\s*$/im.test(body)) {
+      fail("robots.txt", "this is a non-production deployment, so robots.txt must carry a blanket Disallow: /");
+    }
+    if (/sitemap:/i.test(body)) {
+      fail("robots.txt", "a non-production deployment must not advertise a sitemap");
+    }
+  }
   // Both forms of the same mistake: blocking rendering resources by extension,
   // or by blocking the directory they live in. The second is easy to do by
   // accident and invisible unless you look for it specifically.
@@ -195,7 +253,8 @@ if (robots) {
   }
 
   // Every sitemap robots.txt advertises must actually resolve. A dead Sitemap:
-  // line is silent — nothing reports it back to you.
+  // line is silent — nothing reports it back to you. (In non-production the
+  // loop finds nothing, since advertising one is a failure above.)
   for (const [, loc] of body.matchAll(/^\s*Sitemap:\s*(\S+)/gim)) {
     try {
       const res = await fetch(loc.replace(/^https?:\/\/[^/]+/, BASE));
@@ -206,8 +265,23 @@ if (robots) {
   }
 }
 
-// The index must exist and must point at chunks that resolve.
-const sitemap = await checkStatus("/sitemap.xml", 200, "sitemap");
+// --- A non-production deployment must also send the header, since robots.txt
+//     only stops a crawl starting and says nothing about what is already known.
+if (!INDEXABLE) {
+  try {
+    const res = await fetch(`${BASE}/`, { redirect: "manual" });
+    const tag = res.headers.get("x-robots-tag") ?? "";
+    if (!/noindex/i.test(tag)) {
+      fail("X-Robots-Tag", `a non-production deployment must send X-Robots-Tag: noindex (got "${tag || "no header"}")`);
+    }
+  } catch (err) {
+    fail("X-Robots-Tag", `could not read response headers: ${err.message}`);
+  }
+}
+
+// The index must exist and must point at chunks that resolve. Production only:
+// a preview deliberately advertises no sitemap.
+const sitemap = INDEXABLE ? await checkStatus("/sitemap.xml", 200, "sitemap") : null;
 if (sitemap) {
   const xml = await sitemap.text();
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);

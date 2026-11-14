@@ -34,9 +34,11 @@ cheap now and expensive to retrofit.
 8. **Schema only for content visibly on the page.** Marking up what is not
    there is a manual-action risk, not a clever trick.
 
-9. **One page per search.** If a new page's `targetQuery` matches an existing
-   one, they are the same page — extend it instead. The route check fails on
-   duplicates.
+9. **One page per search.** Two pages must not chase one `targetQuery`; the
+   route check fails on duplicates. A duplicate is a **review trigger, not an
+   instruction to merge**: either the two serve one intent, in which case extend
+   one page and 301 the other, or they serve different intents and each needs
+   its own honest query. Never reword a query just to clear the check.
 
 10. **Keep `<head>` free of render-blocking scripts.** Third-party tags go
     `async` or `defer`, or do not go in at all.
@@ -51,6 +53,33 @@ cheap now and expensive to retrofit.
     `lib/site.config.ts` is the one signal `app/robots.ts` and `next.config.ts`
     both read. If a preview is being indexed, fix the environment variable — do
     not bypass the check.
+
+Rules 13–17 were added on 14 November 2026, after audits of the design-to-build
+handoff showed that an approved design image can carry things the page must not.
+
+13. **All text is real HTML text.** Never bake a heading, copy or label into an
+    image. If an image shows words that matter, those words also exist as text
+    on the page.
+
+14. **Build only the content and claims in the page's wireframe plan.** A design
+    image controls the look, never the content. If it shows a rating, price,
+    badge, review, statistic or tagline the plan does not contain, leave it out
+    and flag it. Invented claims are rule 8's manual-action risk, arriving
+    through a picture.
+
+15. **No autoplay video and no animation on page load.** Video plays only when
+    the user asks. Respect `prefers-reduced-motion`. The hero is a still image
+    through `Img.tsx`, marked `priority`. The render check fails on
+    `<video autoplay>`.
+
+16. **The opening answer is visible on the first screen,** on mobile and desktop.
+    A hero may sit beside or below it, never push it out of view. This is the
+    layout half of "Answer first" below.
+
+17. **Code exported by a design tool is a reference, not code to ship.** Stitch,
+    v0, Figma or any generator's output is treated like the design image: rebuild
+    it inside this template, through `seoFor`, `Img.tsx` and the registry, so the
+    gates run on it. Never paste generated pages in whole.
 
 ## Before committing
 
@@ -89,6 +118,8 @@ still reads as if it is protecting you.
 | Headers, CSP, image formats | `next.config.ts` |
 | robots.txt (AI crawlers allowed on purpose) | `app/robots.ts` |
 | Sitemap, auto-splitting at 40,000 URLs | `app/sitemap.ts` |
+| Live-site alert check, every six hours | `scripts/check-live.mjs`, `../.github/workflows/live-check.yml` (repo root) |
+| Weekly Search Console report and its kept data | `scripts/search-report.mjs`, `../.github/workflows/search-report.yml` (repo root), `monitoring/` |
 
 Change these in one place. Duplicating a value is how a site ends up telling
 two different stories about itself.

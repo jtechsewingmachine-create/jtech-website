@@ -1,0 +1,54 @@
+# The weekly search report. Every Monday: pull Search Console, keep the raw data
+# in the repo (Search Console itself discards it after 16 months), and open an
+# issue holding the report, so it arrives as a GitHub notification email.
+#
+# Setup, once per site:
+#   1. Google Cloud: create a service account, enable the Search Console API,
+#      download its JSON key.
+#   2. Search Console: add the service account's email as a user (Restricted is
+#      enough) on the property.
+#   3. GitHub repo: secret GSC_SERVICE_ACCOUNT = the JSON key; variables
+#      GSC_PROPERTY (e.g. sc-domain:example.com) and SITE_URL.
+# Until GSC_PROPERTY is set, runs skip.
+name: search-report
+
+on:
+  schedule:
+    - cron: "41 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+# Jtech: the template lives in web/, so every step runs there.
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  report:
+    if: ${{ vars.GSC_PROPERTY != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/search-report.mjs
+        env:
+          GSC_SERVICE_ACCOUNT: ${{ secrets.GSC_SERVICE_ACCOUNT }}
+          GSC_PROPERTY: ${{ vars.GSC_PROPERTY }}
+          SITE_URL: ${{ vars.SITE_URL }}
+      - name: Keep the data and the report
+        run: |
+          git config user.name "search-report"
+          git config user.email "search-report@users.noreply.github.com"
+          git add monitoring
+          git commit -m "Search report $(date -u +%F)" || exit 0
+          git push
+      - name: Open the report as an issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "Search report $(date -u +%F)" --body-file "monitoring/reports/$(date -u +%F).md"

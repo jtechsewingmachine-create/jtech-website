@@ -1,0 +1,31 @@
+# The alert for silent failures: every six hours, re-run the build gates against
+# the live domain. A failed run is the alert — GitHub notifies the person who
+# created this workflow (or last changed its schedule), so turn on failed-workflow
+# email in your GitHub notification settings.
+#
+# Set the repository variable SITE_URL (Settings → Secrets and variables →
+# Actions → Variables) to the production URL. Until it is set, runs skip, so a
+# fresh copy of the template does not start failing.
+name: live-check
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+# Jtech: the template lives in web/, so every step runs there.
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  live:
+    if: ${{ vars.SITE_URL != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/check-live.mjs "${{ vars.SITE_URL }}"
