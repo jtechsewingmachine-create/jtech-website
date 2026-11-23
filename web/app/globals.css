@@ -1148,9 +1148,15 @@ svg {
   padding-left: 1.25rem;
 }
 
+.error-summary li + li {
+  margin-top: 0.25rem;
+}
+
+/* WCAG 2.5.8: each stacked link is a full 24px target, not a borderline one-line box */
 .error-summary a {
-  min-height: 0;
-  display: inline;
+  min-height: 24px;
+  display: inline-block;
+  padding-block: 2px;
   color: var(--red);
 }
 
