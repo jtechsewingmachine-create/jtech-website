@@ -18,16 +18,16 @@
   },
   "dependencies": {
     "next": "^15.5.4",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "//overrides": "Next 15 pins a postcss with four advisories (XSS via unescaped </style>, arbitrary .map reads via attacker-controlled sourceMappingURL). They only bite on attacker-controlled CSS, which a build never processes - but `npm audit fix --force` would jump to Next 16. This pin stays inside the 8.x line Next expects and clears the audit. Drop it once Next ships a patched postcss itself.",
   "overrides": {
     "postcss": "^8.5.29"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.10.2",
-    "@playwright/test": "^1.56.1",
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
