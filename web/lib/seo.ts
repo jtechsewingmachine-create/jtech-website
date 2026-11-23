@@ -1,6 +1,63 @@
 import type { Metadata } from "next";
 import { site, absoluteUrl, isIndexableDeployment } from "./site.config";
 import { routeFor } from "./routes";
+import type { Product } from "./merchant-products";
+
+const SCHEMA_AVAILABILITY = {
+  in_stock: "https://schema.org/InStock",
+  out_of_stock: "https://schema.org/OutOfStock",
+  preorder: "https://schema.org/PreOrder",
+  backorder: "https://schema.org/BackOrder",
+} as const;
+
+/**
+ * Product + Offer schema, built from the same record as the page and the feed.
+ * AggregateRating appears only when the product carries real review data, and
+ * the page must show that rating — schema only for visible content (rule 8).
+ */
+export function productJsonLd(p: Product) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: p.name,
+    description: p.description,
+    sku: p.id,
+    ...(p.gtin ? { gtin: p.gtin } : {}),
+    ...(p.mpn ? { mpn: p.mpn } : {}),
+    brand: { "@type": "Brand", name: p.brand },
+    image: absoluteUrl(p.image.src),
+    ...(p.rating
+      ? { aggregateRating: { "@type": "AggregateRating", ratingValue: p.rating.value, reviewCount: p.rating.count } }
+      : {}),
+    offers: {
+      "@type": "Offer",
+      url: absoluteUrl(p.path),
+      price: p.price.toFixed(2),
+      priceCurrency: p.currency,
+      availability: SCHEMA_AVAILABILITY[p.availability],
+      itemCondition: `https://schema.org/${p.condition === "used" ? "Used" : p.condition === "refurbished" ? "Refurbished" : "New"}Condition`,
+      ...(p.shipping
+        ? {
+            shippingDetails: {
+              "@type": "OfferShippingDetails",
+              shippingRate: { "@type": "MonetaryAmount", value: p.shipping.price.toFixed(2), currency: p.currency },
+              shippingDestination: { "@type": "DefinedRegion", addressCountry: p.shipping.country },
+            },
+          }
+        : {}),
+      ...(p.returns
+        ? {
+            hasMerchantReturnPolicy: {
+              "@type": "MerchantReturnPolicy",
+              applicableCountry: p.returns.country,
+              returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+              merchantReturnDays: p.returns.days,
+            },
+          }
+        : {}),
+    },
+  };
+}
 
 /**
  * Builds a page's Metadata from its registry row.

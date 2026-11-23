@@ -118,3 +118,6 @@ Format: `## D-001 — <title>` · Date · Feature · Decision · Reason · Docs 
 
 ## D-039 — Domain bought; enquiry reading deferred to a separate admin site
 2026-11-13 · F-09 · Owner bought `jtechsewingmachines.com`. Nobody reads enquiries yet; the owner will build a separate admin-facing site later, and notifications are deferred until then. This site stays the public product site only. Enquiries save end to end (verified live: test row in `public.enquiries`). · Owner answers to the open questions. · — · owner
+
+## D-040 — Template merchant-feed record lives in `lib/merchant-products.ts`
+2026-11-23 · seo-starter upgrade · The new template ships `lib/products.ts` (merchant `Product` type, empty list, drives `/feeds/products.xml` and `productJsonLd`). Jtech already has `lib/products.ts`, the demo catalogue every page imports, with a different shape and sample prices. Copied the template file unchanged as `lib/merchant-products.ts` and pointed the feed route and `seo.ts` at it; the check scripts only read the served feed. The list stays empty: demo machines must not enter a merchant feed or Product schema until prices, availability and identifiers are real. · Builder decision (no overwrite of Jtech work). · — · builder

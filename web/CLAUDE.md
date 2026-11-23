@@ -118,6 +118,7 @@ still reads as if it is protecting you.
 | Headers, CSP, image formats | `next.config.ts` |
 | robots.txt (AI crawlers allowed on purpose) | `app/robots.ts` |
 | Sitemap, auto-splitting at 40,000 URLs | `app/sitemap.ts` |
+| Products: one record drives the page, the Product schema (`productJsonLd`) and the merchant feed | `lib/merchant-products.ts` (Jtech's `lib/products.ts` is the demo catalogue, not the feed), `app/feeds/products.xml/route.ts` |
 | Live-site alert check, every six hours | `scripts/check-live.mjs`, `../.github/workflows/live-check.yml` (repo root) |
 | Weekly Search Console report and its kept data | `scripts/search-report.mjs`, `../.github/workflows/search-report.yml` (repo root), `monitoring/` |
 

@@ -52,8 +52,25 @@ for (const r of routes) {
   const p = r.path;
 
   // --- Required fields: a missing one means a page ships without a signal ---
-  for (const field of ["path", "targetQuery", "intent", "pageType", "title", "description"]) {
+  for (const field of ["path", "intent", "pageType", "title", "description"]) {
     if (!r[field] || String(r[field]).trim() === "") fail(p, `missing required field "${field}"`);
+  }
+
+  // targetQuery is required only for a page that is meant to be found. A
+  // private or utility screen has no search target; forcing one invents search
+  // demand, which is the thing this registry exists to stop.
+  const hasQuery = Boolean(r.targetQuery && String(r.targetQuery).trim() !== "");
+  if (!hasQuery && r.indexable !== false) {
+    fail(p, 'missing "targetQuery". If this page has no search target, set indexable: false and targetQuery: null');
+  }
+
+  // A planning placeholder is not a query. The wireframe handoff legitimately
+  // exports UNVERIFIED and N/A as planning markers; they must not reach an
+  // indexable row, where they would read as a real search target and land in
+  // the sitemap.
+  const PLACEHOLDER = /^(unverified|unknown|n\/?a|tbd|todo|placeholder|none|null)$/i;
+  if (hasQuery && r.indexable !== false && PLACEHOLDER.test(String(r.targetQuery).trim())) {
+    fail(p, `targetQuery "${r.targetQuery}" is a planning placeholder, not a search target. Either supply the real query or set indexable: false with targetQuery: null`);
   }
   if (!("clusterParent" in r)) fail(p, 'missing "clusterParent" (use null for a pillar)');
 
@@ -74,14 +91,19 @@ for (const r of routes) {
     ["path", p],
     ["title", r.title],
     ["description", r.description],
-    ["query", r.targetQuery],
+    // Cannibalization only applies between pages that compete in search, so a
+    // non-indexable page's query (normally null) is not compared.
+    ["query", r.indexable === false ? null : r.targetQuery],
   ]) {
     if (!value) continue;
     const norm = String(value).trim().toLowerCase();
     const prior = seen[key].get(norm);
     if (prior) {
       if (key === "query") {
-        fail(p, `targetQuery "${r.targetQuery}" is already used by ${prior}. Two pages chasing one search weaken both — consolidate and 301 one of them.`);
+        // A duplicate is a review trigger, not an instruction to merge. Under
+        // the settled no-automatic-pruning rule, deciding that two pages are
+        // one page is a judgement, not something a gate gets to make.
+        fail(p, `targetQuery "${r.targetQuery}" is already used by ${prior}. Two pages chasing one search weaken both, so this needs a decision: either they serve one intent — extend one page and 301 the other — or they serve different intents and each needs its own honest query. Do not merge automatically, and do not reword a query just to clear this check.`);
       } else if (key === "path") {
         fail(p, `duplicate path, already registered`);
       } else {
@@ -92,12 +114,17 @@ for (const r of routes) {
     }
   }
 
-  // --- Lengths. Hard-fail where truncation is certain, warn where it is a judgement call. ---
-  if (r.title && r.title.length > 60) fail(p, `title is ${r.title.length} chars; over 60 will truncate in search results`);
+  // --- Lengths. These are THIS TEMPLATE'S policy, not published Google limits.
+  //     Google truncates the displayed title by pixel width, not character
+  //     count, and rewrites the description for most results anyway. 60 and 160
+  //     are practical proxies that keep titles readable and descriptions
+  //     purposeful. They stay hard failures because a gate that only warns gets
+  //     ignored — but say why honestly rather than claiming a rule. ---
+  if (r.title && r.title.length > 60) fail(p, `title is ${r.title.length} chars; house limit is 60 (display truncation is by pixel width, so treat 60 as the safe proxy)`);
   if (r.title && r.title.length < 15) warn(p, `title is only ${r.title.length} chars; likely under-using the space`);
   if (r.description) {
     const n = r.description.length;
-    if (n > 160) fail(p, `description is ${n} chars; over 160 will be cut off`);
+    if (n > 160) fail(p, `description is ${n} chars; house limit is 160 (Google rewrites most descriptions, so this is about writing one worth showing, not a published cap)`);
     else if (n < 140) warn(p, `description is ${n} chars; aim for 140-160`);
   }
 
@@ -109,6 +136,9 @@ for (const r of routes) {
   }
 
   // --- Cluster integrity ---
+  if (r.pageType === "child" && !r.clusterParent) {
+    fail(p, 'pageType is "child" but clusterParent is null; a child must name the pillar it sits under');
+  }
   if (r.clusterParent) {
     if (r.clusterParent === p) fail(p, "clusterParent points at itself");
     else if (!routes.some((o) => o.path === r.clusterParent)) {

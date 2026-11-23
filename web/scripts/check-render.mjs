@@ -186,6 +186,34 @@ async function checkRoute(route) {
     }
   }
 
+  // --- Product parity: page, Product schema and merchant feed must agree. AI
+  //     shopping ranks on price and availability, and Merchant Center
+  //     disapproves products whose page and feed disagree. ---
+  const ldProducts = [...html.matchAll(/<script[^>]+application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi)]
+    .map((m) => { try { return JSON.parse(m[1]); } catch { return null; } })
+    .filter((d) => d?.["@type"] === "Product");
+  const fed = feed.get(route.path);
+  feedSeen.add(route.path);
+  if (ldProducts.length > 1) fail(route.path, "more than one Product schema on the page");
+  if (ldProducts.length && !fed) fail(route.path, "Product schema on the page but no item in /feeds/products.xml — add it to lib/products.ts");
+  if (fed && !ldProducts.length) fail(route.path, "in the product feed but the page has no Product schema — render productJsonLd(product)");
+  if (fed && ldProducts.length) {
+    const ld = ldProducts[0], offer = ld.offers ?? {};
+    const [amount, currency] = fed.price.split(" ");
+    if (offer.price !== amount || offer.priceCurrency !== currency) fail(route.path, `price differs: feed ${fed.price}, schema ${offer.price} ${offer.priceCurrency}`);
+    if (!String(offer.availability).toLowerCase().replace(/_/g, "").endsWith(fed.availability.replace(/_/g, ""))) {
+      fail(route.path, `availability differs: feed ${fed.availability}, schema ${offer.availability}`);
+    }
+    for (const key of ["gtin", "mpn"]) if ((ld[key] ?? "") !== (fed[key] ?? "")) fail(route.path, `${key} differs between feed and schema`);
+    if (ld.brand?.name !== fed.brand) fail(route.path, `brand differs: feed ${fed.brand}, schema ${ld.brand?.name}`);
+    // The price a shopper sees must be the one being marked up (rule 8).
+    const visible = stripTags(html).replace(/[,\s]/g, "");
+    if (!visible.includes(String(Math.round(Number(amount))))) fail(route.path, `the price ${fed.price} is not shown as visible text on the page`);
+    if (ld.aggregateRating && !stripTags(html).includes(String(ld.aggregateRating.reviewCount))) {
+      fail(route.path, "schema carries a rating but the page does not show its review count — rating schema only for visible, real reviews");
+    }
+  }
+
   // --- Link volume. Past roughly 100 links on a page, the ones that matter get
   //     diluted by boilerplate. An audited page carried 151, mostly mega-menu
   //     and footer, drowning out its own variant and city-price links. ---
@@ -220,7 +248,29 @@ async function checkStatus(path, expected, ctx) {
 const routes = loadRoutes().filter((r) => r.indexable !== false);
 console.log(`check-render: ${BASE}, ${routes.length} route(s)\n`);
 
+// The merchant feed, read once: page path → the values the page must match.
+const feed = new Map();
+const feedSeen = new Set();
+const feedRes = await checkStatus("/feeds/products.xml", 200, "product feed");
+if (feedRes) {
+  const xml = await feedRes.text();
+  if (!/<rss\b[^>]*xmlns:g=/.test(xml)) fail("product feed", "not a Google-format RSS feed");
+  for (const [, item] of xml.matchAll(/<item>([\s\S]*?)<\/item>/g)) {
+    const get = (tag) => item.match(new RegExp(`<${tag}>([^<]*)</${tag}>`))?.[1]?.replace(/&amp;/g, "&");
+    const link = get("link");
+    if (!link) { fail("product feed", "an item has no <link>"); continue; }
+    feed.set(new URL(link).pathname, {
+      price: get("g:price") ?? "", availability: get("g:availability") ?? "",
+      brand: get("g:brand"), gtin: get("g:gtin"), mpn: get("g:mpn"),
+    });
+  }
+}
+
 for (const route of routes) await checkRoute(route);
+
+for (const path of feed.keys()) {
+  if (!feedSeen.has(path)) fail("product feed", `${path} is in the feed but is not a registered, indexable page`);
+}
 
 // --- An unknown URL must 404, not 200. This is the soft-404 guard. ---
 await checkStatus("/this-url-does-not-exist-xyz123", 404, "404 handling");

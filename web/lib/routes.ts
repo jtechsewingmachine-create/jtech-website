@@ -20,8 +20,15 @@ export type PageType = "pillar" | "child" | "comparison" | "guide" | "utility";
 export interface Route {
   /** Path as served. Lowercase, hyphenated, no trailing slash. "/" for home. */
   path: string;
-  /** The exact search this page exists to answer. One page per query. */
-  targetQuery: string;
+  /**
+   * The exact search this page exists to answer. One page per query.
+   *
+   * `null` ONLY for a page carrying `indexable: false` — a login, checkout,
+   * account or other private screen has no search target, and inventing one to
+   * satisfy a field is worse than recording that it has none. The gate enforces
+   * that pairing: null here without `indexable: false` fails the build.
+   */
+  targetQuery: string | null;
   /** What the searcher wants. Decides how the page should read. */
   intent: Intent;
   /** Shape of the page. Decides template and depth. */
