@@ -17,6 +17,11 @@ updates:
       patch-and-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+    ignore:
+      # @types/node must describe the Node version the site actually runs on.
+      # Raise it by hand when the runtime moves, never ahead of it.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: "/"
